@@ -1,0 +1,104 @@
+<resources>
+    <string name="app_name">MecanicosGruas</string>
+    <string name="title_app">Mecanicos y Gruas</string>
+    <string name="screen_title">Pantalla de Inicio</string>
+    <string name="title_login">Iniciar Sesion</string>
+    <string name="desc_user">Usuario</string>
+    <string name="desc_password">Contraseña</string>
+    <string name="btnTxtLogin">Iniciar Sesion</string>
+    <string name="btnTxtRegister">Registrar</string>
+    <string name="btnTxtLoginFace">Iniciar con Facebook</string>
+    <string name="desc_Telefono">Telefono</string>
+    <string name="desc_txt_user">Perfil del Usuario</string>
+    <string name="desc_nombre">Nombre</string>
+    <string name="desc_apellido">Apellido</string>
+    <string name="desc_email">Correo Electronico</string>
+    <string name="desc_correo">Correo</string>
+    <string name="btn_desc_cuenta">Crear Cuenta</string>
+    <string name="txtViewTitle_fl_service">Crea tu servicio ahora</string>
+    <string name="background">Background</string>
+    <string name="desc_servicio">Servicio</string>
+    <string name="titulo_service">Titulo del Servicio</string>
+    <string name="select_images">Seleccionar imagenes</string>
+    <string name="desc_background_img_service">Portada del servicio</string>
+    <string name="desc_search_img">Buscar Image</string>
+    <string name="desc_img_service">Imagen servicio</string>
+    <string name="desc_direccion">Direccion</string>
+    <string name="desc_ciudad">Ciudad</string>
+    <string name="desc_colonia">Colonia</string>
+    <string name="desc_calle">Calle</string>
+    <string name="desc_num">Numero</string>
+    <string name="btn_desc_service">Editar servicio</string>
+    <string name="desc_note">Atencion: Solamente se puede crear un servicio por usuario. Si ya creo uno, solamente tiene que cambiar los datos que se muestra y tocar el boton guardar.</string>
+    <string name="desc_title_fl_list_service">Servicios Destacados</string>
+    <string name="desc_email_example">example@example.example</string>
+    <string name="desc_background_user">Portada usuario</string>
+    <string name="desc_img_user">Imagen de Perfil</string>
+    <string name="desc_semana">Semana</string>
+    <string name="desc_horario">Horarios</string>
+    <string name="desc_service">Describe de que se trata tu servicio</string>
+    <string name="desc_inbox">Mandar inbox</string>
+    <string name="desc_info">Informacion</string>
+    <string name="desc_description">Descripcion</string>
+    <string name="desc_calificar">Calificar</string>
+    <string name="desc_img_change">Cambiar Imagen</string>
+    <string name="desc_idioma_title">Cambiar de idioma</string>
+    <string name="desc_registro_title">Registro</string>
+    <string name="desc_edit">Editar</string>
+    <string name="desc_welcome">Bienvenido</string>
+    <string-array name="string_array_hours">
+        <item>Cerrado</item>
+        <item>00:00</item>
+        <item>00:30</item>
+        <item>01:00</item>
+        <item>01:30</item>
+        <item>02:00</item>
+        <item>02:30</item>
+        <item>03:00</item>
+        <item>03:30</item>
+        <item>04:00</item>
+        <item>04:30</item>
+        <item>05:00</item>
+        <item>05:30</item>
+        <item>06:00</item>
+        <item>06:30</item>
+        <item>07:00</item>
+        <item>07:30</item>
+        <item>08:00</item>
+        <item>08:30</item>
+        <item>09:00</item>
+        <item>09:30</item>
+        <item>10:00</item>
+        <item>10:30</item>
+        <item>11:00</item>
+        <item>11:30</item>
+        <item>12:00</item>
+        <item>12:30</item>
+        <item>13:00</item>
+        <item>13:30</item>
+        <item>14:00</item>
+        <item>14:30</item>
+        <item>15:00</item>
+        <item>15:30</item>
+        <item>16:00</item>
+        <item>16:30</item>
+        <item>17:00</item>
+        <item>17:30</item>
+        <item>18:00</item>
+        <item>18:30</item>
+        <item>19:00</item>
+        <item>19:30</item>
+        <item>20:00</item>
+        <item>20:30</item>
+        <item>21:00</item>
+        <item>21:30</item>
+        <item>22:00</item>
+        <item>22:30</item>
+        <item>23:00</item>
+        <item>23:30</item>
+    </string-array>
+    <string-array name="string_array_lenguaje">
+        <item>Español</item>
+        <item>English</item>
+    </string-array>
+</resources>

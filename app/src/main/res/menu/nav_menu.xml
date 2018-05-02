@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_inicio"
+            android:icon="@drawable/ic_action_home_holo_dark"
+            android:title="Inicio"/>
+        <item
+            android:id="@+id/nav_inbox"
+            android:icon="@drawable/ic_action_inbox_holo_dark"
+            android:title="Inbox"/>
+        <item
+            android:id="@+id/nav_service"
+            android:icon="@drawable/ic_action_service_holo_dark"
+            android:title="Servicio"/>
+    </group>
+    <item
+        android:id="@+id/nav_subheader"
+        android:title="Otras opciones">
+
+        <menu>
+            <item
+                android:id="@+id/nav_setting"
+                android:icon="@drawable/ic_action_custom_holo_dark"
+                android:title="Configurar" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_action_logout_holo_dark"
+                android:title="Cerrar Sesion"/>
+        </menu>
+
+    </item>
+</menu>
