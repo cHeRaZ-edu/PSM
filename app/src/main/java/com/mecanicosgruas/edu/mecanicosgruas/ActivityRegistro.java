@@ -15,6 +15,8 @@ import com.mecanicosgruas.edu.mecanicosgruas.model.User;
 
 import org.json.JSONObject;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.Normalizer;
 
 public class ActivityRegistro extends AppCompatActivity {
@@ -75,7 +77,7 @@ public class ActivityRegistro extends AppCompatActivity {
                     apellidoUser = Normalizer.normalize(apellidoUser, Normalizer.Form.NFD);
                     apellidoUser = apellidoUser.replaceAll("[^\\p{ASCII}]", "");
                     User usuario = new User(nameUser,apellidoUser,email.getText().toString(),password.getText().toString(),telefono.getText().toString());
-                    messageJson = serializeToJson(usuario);
+                    messageJson = serializeToJson(usuario);//Usuario en Json
                     //Registrar desde el servidor
                     SegundoPlano tarea = new SegundoPlano();
                     tarea.execute();
@@ -129,14 +131,30 @@ public class ActivityRegistro extends AppCompatActivity {
     private String RegisterRequest(String messageJson)
     {
         String result = "";
+        /*
         //Primer paso definir los parametros del soap
         String NAMESPACE = "http://www.example.org/register/";
         String METHOD_NAME = "registeruser";
         String SOAP_ACTION = "http://www.example.org/register/registeruser";
         String url = "http://appmecanicogruas.servehttp.com/application/php/registerSoap.php?wsdl";
-
+        */
         try
         {
+            //Endpoint
+            URL endpoint = new URL("http://appmecanicogruas.servehttp.com/register/user");
+            // Create connection
+            HttpURLConnection ConnectEndPoint = (HttpURLConnection)endpoint.openConnection();
+
+            //Get Response
+            if(ConnectEndPoint.getResponseCode() == 200)//Is OK
+            {
+
+            }
+            else
+            {
+                //Error 404,400,500... etc
+
+            }
             /*
             //Inicizalizar request
             SoapObject request = new SoapObject(NAMESPACE,METHOD_NAME);
@@ -152,6 +170,7 @@ public class ActivityRegistro extends AppCompatActivity {
             SoapPrimitive resultSoap = (SoapPrimitive)envelope.getResponse();
             result = (String)resultSoap.toString();
             */
+
         }
         catch(Exception ex)
         {

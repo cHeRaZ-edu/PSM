@@ -1,11 +1,11 @@
 package com.mecanicosgruas.edu.mecanicosgruas;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -142,18 +142,25 @@ public class PantallaInicio extends AppCompatActivity {
         }
     }
 
-    private void changeFragment(Fragment fragment, String tag)
+    private void changeFragment(Fragment newFragment, String tag)
     {
         FragmentManager fragmentManager = getFragmentManager();
 
-        //Check if visible
-        Fragment FragmentDisplay = fragmentManager.findFragmentByTag(tag);
-        if(FragmentDisplay!=null&&FragmentDisplay.isVisible())
+        //Operaciones de agregar, remplazar y eliminar
+
+        // Administra los frgamentos de un activity
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+        //Buscar si ya existe el mismo frgamento "abierto"
+        android.support.v4.app.Fragment fragmentoActual = fm.findFragmentByTag(tag);
+        if(fragmentoActual != null && fragmentoActual.isVisible())
             return;
-        //show fragment
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_base,fragment,tag);
-        fragmentTransaction.commit();
+        // realiza las "transicciones" de un fragmento
+        // Agregar, remplazar y eliminar
+        android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
+
+        ft.replace(R.id.fragment_base,newFragment, tag);
+
+        ft.commit();//aplicar cambios
     }
 
     //Cerrar todos los Fragmens y el Menu lateral
