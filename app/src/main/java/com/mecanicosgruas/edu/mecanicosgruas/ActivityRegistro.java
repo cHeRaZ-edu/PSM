@@ -14,11 +14,6 @@ import com.google.gson.Gson;
 import com.mecanicosgruas.edu.mecanicosgruas.model.User;
 
 import org.json.JSONObject;
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapPrimitive;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
 
 import java.text.Normalizer;
 
@@ -133,7 +128,7 @@ public class ActivityRegistro extends AppCompatActivity {
     }
     private String RegisterRequest(String messageJson)
     {
-        String result;
+        String result = "";
         //Primer paso definir los parametros del soap
         String NAMESPACE = "http://www.example.org/register/";
         String METHOD_NAME = "registeruser";
@@ -142,6 +137,7 @@ public class ActivityRegistro extends AppCompatActivity {
 
         try
         {
+            /*
             //Inicizalizar request
             SoapObject request = new SoapObject(NAMESPACE,METHOD_NAME);
             //Agregar Propoiedad del mensaje
@@ -155,6 +151,7 @@ public class ActivityRegistro extends AppCompatActivity {
             //Obtener respuesta del servidor
             SoapPrimitive resultSoap = (SoapPrimitive)envelope.getResponse();
             result = (String)resultSoap.toString();
+            */
         }
         catch(Exception ex)
         {

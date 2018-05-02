@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,8 +24,8 @@ import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
 
 public class PantallaInicio extends AppCompatActivity {
     Toolbar toolbar;
-    private DrawerLayout mDrawerLayout;
-    private NavigationView navPanel;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -40,7 +41,7 @@ public class PantallaInicio extends AppCompatActivity {
         switch (item.getItemId())
         {
             case android.R.id.home:
-                mDrawerLayout.openDrawer(Gravity.START);
+                drawerLayout.openDrawer(Gravity.START);
                 return true;
             case R.id.app_bar_search:
                 Toast.makeText(getApplicationContext(),"Call search",Toast.LENGTH_LONG).show();
@@ -57,8 +58,8 @@ public class PantallaInicio extends AppCompatActivity {
         setContentView(R.layout.activity_pantalla_inicio);
         //get view
         toolbar = (Toolbar) findViewById(R.id.toolbarIniId);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_Inicio);
-        navPanel = (NavigationView)findViewById(R.id.nav_panel);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_Inicio);
+        navigationView = (NavigationView)findViewById(R.id.nav_panel);
         //setup hardcore toolbar
         int idColor = Resources.getSystem().getColor(android.R.color.background_light);
         toolbar.setTitle("Inicio");
@@ -77,9 +78,10 @@ public class PantallaInicio extends AppCompatActivity {
 
 
     }
+    //Cambair de fragment
     private void NavEventMenuItemView()
     {
-        navPanel.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 boolean checkBoton = false;
@@ -117,14 +119,30 @@ public class PantallaInicio extends AppCompatActivity {
                 {
                     getSupportActionBar().setTitle(item.getTitle());
                 }
-                mDrawerLayout.closeDrawers();
+                drawerLayout.closeDrawers();
                 return false;
             }
         });
         return;
     }
 
-    private void changeFragment(Fragment fragment,String tag)
+    @Override
+    public void onBackPressed() {
+        // Si el drawerLayout esta abierto y se presiona back
+        //cerrar drawerLayout
+        if(drawerLayout.isDrawerOpen(GravityCompat.START))
+        {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else
+        {
+            //Cuano el drawerLayout esta cerrado
+            //cerrar la activity
+            super.onBackPressed();
+        }
+    }
+
+    private void changeFragment(Fragment fragment, String tag)
     {
         FragmentManager fragmentManager = getFragmentManager();
 
@@ -137,4 +155,7 @@ public class PantallaInicio extends AppCompatActivity {
         fragmentTransaction.replace(R.id.fragment_base,fragment,tag);
         fragmentTransaction.commit();
     }
+
+    //Cerrar todos los Fragmens y el Menu lateral
+
 }

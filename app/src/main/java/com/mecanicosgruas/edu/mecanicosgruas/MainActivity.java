@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+// Inicio de sesion
 public class MainActivity extends AppCompatActivity {
 
     EditText editTxtUser;
