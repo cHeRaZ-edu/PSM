@@ -11,10 +11,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import com.mecanicosgruas.edu.mecanicosgruas.model.User;
 
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.Normalizer;
@@ -22,6 +26,7 @@ import java.text.Normalizer;
 public class ActivityRegistro extends AppCompatActivity {
 
     Button btnCrearCuenta;
+    EditText nickname;
     EditText nombre;
     EditText apellido;
     EditText email;
@@ -53,6 +58,7 @@ public class ActivityRegistro extends AppCompatActivity {
         //Get view
         btnCrearCuenta = (Button) findViewById(R.id.btnCrearCuenta);
 
+        nickname = (EditText)findViewById(R.id.editTxtNicknameRegister);
         nombre = (EditText)findViewById(R.id.editTxtNombreRegister);
         apellido = (EditText)findViewById(R.id.editTxtApellidoRegister);
         email = (EditText)findViewById(R.id.editTxtEmailRegister);
@@ -76,7 +82,14 @@ public class ActivityRegistro extends AppCompatActivity {
                     nameUser = nameUser.replaceAll("[^\\p{ASCII}]", "");
                     apellidoUser = Normalizer.normalize(apellidoUser, Normalizer.Form.NFD);
                     apellidoUser = apellidoUser.replaceAll("[^\\p{ASCII}]", "");
-                    User usuario = new User(nameUser,apellidoUser,email.getText().toString(),password.getText().toString(),telefono.getText().toString());
+                    User usuario = new User(
+                                            nickname.getText().toString(),
+                                            nameUser,
+                                            apellidoUser,
+                                            email.getText().toString(),
+                                            password.getText().toString(),
+                                            telefono.getText().toString()
+                                            );
                     messageJson = serializeToJson(usuario);//Usuario en Json
                     //Registrar desde el servidor
                     SegundoPlano tarea = new SegundoPlano();
@@ -104,6 +117,7 @@ public class ActivityRegistro extends AppCompatActivity {
 
         //Validar datos vacios
         if(
+                nickname.getText().toString().trim().isEmpty() ||
                 nombre.getText().toString().trim().isEmpty() ||
                 apellido.getText().toString().trim().isEmpty() ||
                 emailString.trim().isEmpty() ||
@@ -144,32 +158,31 @@ public class ActivityRegistro extends AppCompatActivity {
             URL endpoint = new URL("http://appmecanicogruas.servehttp.com/register/user");
             // Create connection
             HttpURLConnection ConnectEndPoint = (HttpURLConnection)endpoint.openConnection();
-
+            //Type method http
+            ConnectEndPoint.setRequestMethod("POST");
+            //Voy a mandar un mensaje
+            ConnectEndPoint.setDoOutput(true);
+            ConnectEndPoint.getOutputStream().write(messageJson.getBytes());
             //Get Response
             if(ConnectEndPoint.getResponseCode() == 200)//Is OK
             {
-
+                //Body
+                BufferedReader br = new BufferedReader(new InputStreamReader(ConnectEndPoint.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line+"\n");
+                }
+                br.close();
+                result =  sb.toString();
             }
             else
             {
                 //Error 404,400,500... etc
-
+                result = "El servidor no esta disponible";
             }
-            /*
-            //Inicizalizar request
-            SoapObject request = new SoapObject(NAMESPACE,METHOD_NAME);
-            //Agregar Propoiedad del mensaje
-            request.addProperty("object",messageJson);
-            //Inicizalizar envolpe
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            envelope.setOutputSoapObject(request);
-            //Inicializar Transporte http
-            HttpTransportSE httpMessage = new HttpTransportSE(url);
-            httpMessage.call(SOAP_ACTION,envelope);
-            //Obtener respuesta del servidor
-            SoapPrimitive resultSoap = (SoapPrimitive)envelope.getResponse();
-            result = (String)resultSoap.toString();
-            */
+
+            ConnectEndPoint.disconnect();
 
         }
         catch(Exception ex)

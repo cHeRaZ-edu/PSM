@@ -46,6 +46,7 @@
     <string name="desc_registro_title">Registro</string>
     <string name="desc_edit">Editar</string>
     <string name="desc_welcome">Bienvenido</string>
+    <string name="desc_nickname">Nickname</string>
     <string-array name="string_array_hours">
         <item>Cerrado</item>
         <item>00:00</item>

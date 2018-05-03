@@ -5,18 +5,28 @@ package com.mecanicosgruas.edu.mecanicosgruas.model;
  */
 
 public class User {
+    private String nickname;
     private String name;
-    private String apellido;
+    private String last_name;
     private String email;
     private String password;
     private String telefono;
 
-    public User(String name, String apellido, String email, String password, String telefono) {
+    public User(String nickname,String name, String apellido, String email, String password, String telefono) {
+        this.nickname = nickname;
         this.name = name;
-        this.apellido = apellido;
+        this.last_name = apellido;
         this.email = email;
         this.password = password;
         this.telefono = telefono;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getName() {
@@ -28,11 +38,11 @@ public class User {
     }
 
     public String getApellido() {
-        return apellido;
+        return last_name;
     }
 
     public void setApellido(String apellido) {
-        this.apellido = apellido;
+        this.last_name = apellido;
     }
 
     public String getEmail() {
