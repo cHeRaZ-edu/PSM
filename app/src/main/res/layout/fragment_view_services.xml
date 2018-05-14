@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:context="com.mecanicosgruas.edu.mecanicosgruas.servicio_display">
+
+        <RatingBar
+            android:id="@+id/ratingBarServiceDisplay"
+            style="@style/Widget.AppCompat.RatingBar.Indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:numStars="5"
+            android:rating="1.5" />
+
+        <TextView
+            android:id="@+id/txtViewCalificar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_calificar"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imgViewBackgroundServiceDisplay"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:contentDescription="@string/desc_background_img_service"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/background_service" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgViewService"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:src="@mipmap/ic_launcher"/>
+            <TextView
+                android:id="@+id/txtViewNameServiceDisplay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:text="@string/desc_servicio"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:layout_marginStart="10dp"
+                android:textStyle="bold"
+                android:layout_alignParentBottom="true"/>
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btnMandarInbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/desc_inbox" />
+
+        <TextView
+            android:id="@+id/txtViewInfoService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/desc_info"
+            android:layout_marginTop="15dp"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtViewDescService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/desc_description"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtViewDescServiceContanier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="20dp"
+            android:text="@string/desc_servicio"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/txtViewDescHorario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/desc_horario"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/listViewDisplay_horario"
+            android:layout_width="250dp"
+            android:layout_height="200dp"
+            android:layout_gravity="end"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/txtViewTelefono"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/desc_Telefono"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/txtViewCiudad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/desc_ciudad"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/txtViewColonia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/desc_colonia"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/txtViewCalle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/desc_calle"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/txtViewNum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/desc_num"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chat"
+            android:textSize="18sp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center_horizontal"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="50dp"
+                android:orientation="vertical">
+
+                <ListView
+                    android:id="@+id/listView_chat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true">
+
+                <ImageButton
+                    android:id="@+id/imgBtnSendMessageImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#36c2d4"
+                    android:src="@drawable/ic_action_camera" />
+
+                <EditText
+                    android:id="@+id/editTxtMessage"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Mensaje..."
+                    android:inputType="textMultiLine" />
+
+                <ImageButton
+                    android:id="@+id/imgBtnSendMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#36c2d4"
+                    android:src="@drawable/ic_action_send" />
+
+
+            </LinearLayout>
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+</ScrollView>

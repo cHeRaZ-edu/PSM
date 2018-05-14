@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
 import com.mecanicosgruas.edu.mecanicosgruas.ServicioDisplayActivity;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdaptadorPantallaInicio;
@@ -27,7 +28,7 @@ import java.util.List;
  */
 
 public class FragmentListService extends Fragment {
-    private Activity activity;
+    private PantallaInicio activity;
     private List<Servicio>list_service = new ArrayList<Servicio>();
     private ListView list_view;
     private List<Servicio> testLista = new ArrayList<>();
@@ -37,7 +38,7 @@ public class FragmentListService extends Fragment {
         View view = inflater.inflate(R.layout.fragment_list_service,container,false);
 
         list_view = (ListView) view.findViewById(R.id.listview_services);
-        activity = getActivity();
+        activity = (PantallaInicio) getActivity();
         iniflateListViewServicios();
 
         return view;
@@ -72,9 +73,10 @@ public class FragmentListService extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String data = ((TextView)view.findViewById(R.id.txtViewNameService)).getText().toString();
                 Toast.makeText(activity.getApplicationContext(),data + ": " + Integer.toString(position),Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(activity, ServicioDisplayActivity.class);
-                intent.putExtra("serviceSelect", testLista.get(position));
-                startActivity(intent);
+                activity.changeFragment(new FragmentService(), "displayServices");
+                //Intent intent = new Intent(activity, ServicioDisplayActivity.class);
+                //intent.putExtra("serviceSelect", testLista.get(position));
+                //startActivity(intent);
             }
         });
     }

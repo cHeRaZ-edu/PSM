@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentCreateService;
+import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentInbox;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentListService;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentSettings;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
@@ -99,6 +100,7 @@ public class PantallaInicio extends AppCompatActivity {
                         break;
                     case R.id.nav_inbox:
                         //call fragement inbox
+                        changeFragment(new FragmentInbox(),"Inbox");
                         checkBoton = true;
                         break;
                     case R.id.nav_setting:
@@ -142,7 +144,7 @@ public class PantallaInicio extends AppCompatActivity {
         }
     }
 
-    private void changeFragment(Fragment newFragment, String tag)
+    public void changeFragment(Fragment newFragment, String tag)
     {
         FragmentManager fragmentManager = getFragmentManager();
 
