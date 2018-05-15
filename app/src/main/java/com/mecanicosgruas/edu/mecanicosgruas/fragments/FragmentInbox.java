@@ -66,7 +66,7 @@ public class FragmentInbox extends android.support.v4.app.Fragment {
         listViewInbox.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                activity.changeFragment(new FragmentChat(),"chat");
+                activity.changeFragment(new FragmentChat(),"chat","Chat");
             }
         });
     }

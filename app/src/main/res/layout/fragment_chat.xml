@@ -27,12 +27,14 @@
         android:layout_alignParentBottom="true">
 
         <ImageButton
+            android:id="@+id/idBtnImagenLoad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#36c2d4"
             android:src="@drawable/ic_action_camera" />
 
         <EditText
+            android:id="@+id/idEditTxtMessage"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -40,6 +42,7 @@
             android:inputType="textMultiLine" />
 
         <ImageButton
+            android:id="@+id/idBtnSendMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#36c2d4"

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -48,11 +49,18 @@ public class ListAdapterChat extends BaseAdapter {
             //Inflate xml to view
             view = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.item_message_user,null);
+            LinearLayout ContainerMssage = (LinearLayout)view.findViewById(R.id.linearLayout_container_Message);
+            final ImageView imgViewPhoto = new ImageView(viewGroup.getContext());
+            imgViewPhoto.setImageResource(R.drawable.background);
+            ContainerMssage.addView(imgViewPhoto);
         }
         TextView txtViewUsernickname = (TextView)view.findViewById(R.id.txtViewUsuarioMessage);
         TextView textViewMessage = (TextView)view.findViewById(R.id.txtViewMessage);
         CardView cardLayout = (CardView)view.findViewById(R.id.idCardViewChat);
+
+
         Message message = listMessage.get(position);
+
 
         if(!message.isMe())
         {
@@ -63,6 +71,7 @@ public class ListAdapterChat extends BaseAdapter {
             params.gravity = Gravity.START;
 
             cardLayout.setLayoutParams(params);
+
 
         }
         else

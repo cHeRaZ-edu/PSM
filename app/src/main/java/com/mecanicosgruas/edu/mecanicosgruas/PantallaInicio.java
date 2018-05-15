@@ -2,12 +2,19 @@ package com.mecanicosgruas.edu.mecanicosgruas;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -17,16 +24,30 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+
+import com.mecanicosgruas.edu.mecanicosgruas.ReadPath.ReadPathUtil;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentCreateService;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentInbox;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentListService;
+import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentService;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentSettings;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 public class PantallaInicio extends AppCompatActivity {
+    public final int STORAGE_IMAGE = 200;
+    public final int PHOTO_SHOT = 300;
+
     Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private String fragmentTag="";
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -73,7 +94,7 @@ public class PantallaInicio extends AppCompatActivity {
         //Use my toolbar as actionbar
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        changeFragment(new FragmentListService(),"ListService");
+        //changeFragment(new FragmentListService(),"inicio");
 
 
 
@@ -90,13 +111,13 @@ public class PantallaInicio extends AppCompatActivity {
                 {
                     case R.id.nav_inicio:
                         //call fragment inicio
-                        changeFragment(new FragmentListService(),"ListService");
+                        changeFragment(new FragmentListService(),"inicio");
                         checkBoton = true;
                         break;
                     case R.id.nav_service:
                         //call fragement service manager
                         changeFragment(new FragmentCreateService(),"CreateService");
-                        checkBoton = true;
+                        getSupportActionBar().setTitle("Servicio");
                         break;
                     case R.id.nav_inbox:
                         //call fragement inbox
@@ -111,7 +132,8 @@ public class PantallaInicio extends AppCompatActivity {
                     case R.id.nav_logout:
                         //saving perfil form web server
                         //close activity
-                        finish();
+                        LogOut();
+
                         break;
                     default:
                         break;
@@ -138,12 +160,33 @@ public class PantallaInicio extends AppCompatActivity {
         }
         else
         {
+            switch (fragmentTag)
+            {
+                case "service_chat":
+                    changeFragment(new FragmentService(),"CreateService");
+                    getSupportActionBar().setTitle("Servicio");
+                    break;
+                case "chat":
+                    changeFragment(new FragmentInbox(),"Inbox");
+                    getSupportActionBar().setTitle("Inbox");
+                    break;
+                case "Inbox":
+                case "CreateService":
+                case "Settings":
+                case "servicio":
+                    changeFragment(new FragmentListService(),"inicio");
+                    getSupportActionBar().setTitle("Inicio");
+                    break;
+                case "inicio":
+                    //super.onBackPressed();
+                    LogOut();
+                    break;
+            }
             //Cuano el drawerLayout esta cerrado
             //cerrar la activity
-            super.onBackPressed();
+
         }
     }
-
     public void changeFragment(Fragment newFragment, String tag)
     {
         FragmentManager fragmentManager = getFragmentManager();
@@ -155,7 +198,10 @@ public class PantallaInicio extends AppCompatActivity {
         //Buscar si ya existe el mismo frgamento "abierto"
         android.support.v4.app.Fragment fragmentoActual = fm.findFragmentByTag(tag);
         if(fragmentoActual != null && fragmentoActual.isVisible())
+        {
+            Toast.makeText(getApplicationContext(),"Ya se esta mostrando",Toast.LENGTH_LONG).show();
             return;
+        }
         // realiza las "transicciones" de un fragmento
         // Agregar, remplazar y eliminar
         android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
@@ -163,8 +209,109 @@ public class PantallaInicio extends AppCompatActivity {
         ft.replace(R.id.fragment_base,newFragment, tag);
 
         ft.commit();//aplicar cambios
+        fragmentTag = tag;
     }
 
-    //Cerrar todos los Fragmens y el Menu lateral
+    public void changeFragment(Fragment newFragment, String tag,String titleActionBar)
+    {
+        FragmentManager fragmentManager = getFragmentManager();
+
+        //Operaciones de agregar, remplazar y eliminar
+
+        // Administra los frgamentos de un activity
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+        //Buscar si ya existe el mismo frgamento "abierto"
+        android.support.v4.app.Fragment fragmentoActual = fm.findFragmentByTag(tag);
+        if(fragmentoActual != null && fragmentoActual.isVisible())
+        {
+            Toast.makeText(getApplicationContext(),"Ya se esta mostrando",Toast.LENGTH_LONG).show();
+            return;
+        }
+        // realiza las "transicciones" de un fragmento
+        // Agregar, remplazar y eliminar
+        android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
+
+        ft.replace(R.id.fragment_base,newFragment, tag);
+
+        ft.commit();//aplicar cambios
+        fragmentTag = tag;
+        getSupportActionBar().setTitle(titleActionBar);
+    }
+
+    void LogOut()
+    {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this);
+        }
+        builder.setTitle("Salir")
+                .setMessage("Salir de mecanicos y Gruas")
+                .setPositiveButton("Salir", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        finish();
+                    }
+                })
+                .setNegativeButton("Quedarse", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .show();
+    }
+
+    public void ImageSelect()
+    {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this);
+        }
+        builder.setTitle("Medio")
+                .setMessage("Elige la opcion para la imagen")
+                .setPositiveButton("Foto", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, PHOTO_SHOT);
+                    }
+                })
+                .setNegativeButton("SD", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                        i.setType("image/*");
+                        i.putExtra(Intent.EXTRA_LOCAL_ONLY,true);
+                        startActivityForResult(Intent.createChooser(i,"Selecciona una foto"),STORAGE_IMAGE);
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .show();
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && PHOTO_SHOT == requestCode)
+        {
+            // Guardamos el thumbnail de la imagen en un archivo con el siguiente nombre
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+
+           // mImageView.setImageBitmap(bitmap);
+        } else if(resultCode == RESULT_OK && STORAGE_IMAGE == requestCode)
+        {
+            Uri uri = data.getData();
+            String pathImage = ReadPathUtil.getRealPathFromURI_API19(PantallaInicio.this,uri);
+
+
+
+        }
+    }
 
 }

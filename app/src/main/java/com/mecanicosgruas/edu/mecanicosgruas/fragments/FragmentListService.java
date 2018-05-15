@@ -73,7 +73,7 @@ public class FragmentListService extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String data = ((TextView)view.findViewById(R.id.txtViewNameService)).getText().toString();
                 Toast.makeText(activity.getApplicationContext(),data + ": " + Integer.toString(position),Toast.LENGTH_LONG).show();
-                activity.changeFragment(new FragmentService(), "displayServices");
+                activity.changeFragment(new FragmentService(), "servicio","Servicio");
                 //Intent intent = new Intent(activity, ServicioDisplayActivity.class);
                 //intent.putExtra("serviceSelect", testLista.get(position));
                 //startActivity(intent);

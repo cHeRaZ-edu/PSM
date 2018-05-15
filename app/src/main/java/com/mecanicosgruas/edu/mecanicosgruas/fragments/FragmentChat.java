@@ -6,9 +6,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdapterChat;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdapterInbox;
@@ -27,6 +30,10 @@ public class FragmentChat extends Fragment {
     String nameUser;
     List<Message> listMessage = new ArrayList<>();
     TextView nicknameUser;
+    ImageButton btn_ImageLoad;
+    ImageButton btn_SendMessage;
+    EditText editTxtMessage;
+    PantallaInicio activty;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -35,7 +42,19 @@ public class FragmentChat extends Fragment {
         listViewMessage = (ListView)view.findViewById(R.id.listView_chat);
         nicknameUser = (TextView)view.findViewById(R.id.TxtViewUserInbox);
         TextView message_last = (TextView)view.findViewById(R.id.TxtViewMessageInbox);
+        btn_ImageLoad = (ImageButton)view.findViewById(R.id.idBtnImagenLoad);
+        btn_SendMessage = (ImageButton) view.findViewById(R.id.idBtnSendMessage);
+        editTxtMessage = (EditText)view.findViewById(R.id.idEditTxtMessage);
+
         message_last.setVisibility(View.GONE);
+
+        btn_ImageLoad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activty.ImageSelect();
+            }
+        });
+
 
         return view;
     }
@@ -43,7 +62,9 @@ public class FragmentChat extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        activty = (PantallaInicio)getActivity();
         Inizialitate();
+
     }
 
     void Inizialitate()

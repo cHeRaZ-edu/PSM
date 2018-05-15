@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdapterChat;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdapterHorarioDisplay;
@@ -51,6 +52,8 @@ public class FragmentService extends Fragment {
     private ImageButton SendMessage;
     private ImageButton SendMessagePhoto;
     private EditText editTextMessage;
+
+    private PantallaInicio activity;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,6 +83,8 @@ public class FragmentService extends Fragment {
 
         //Edit
         editTextMessage = (EditText)view.findViewById(R.id.editTxtMessage);
+
+
 
 
 
@@ -120,9 +125,16 @@ public class FragmentService extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        activity = (PantallaInicio) getActivity();
         MostrarHorarios();
         MostrarChat();
+
+        SendInbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activity.changeFragment(new FragmentChat(),"service_chat","Chat");
+            }
+        });
 
     }
 }
