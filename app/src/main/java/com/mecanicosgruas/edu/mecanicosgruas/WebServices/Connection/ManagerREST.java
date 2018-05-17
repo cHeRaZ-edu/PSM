@@ -131,7 +131,6 @@ public class ManagerREST {
                                                     response.getString("pathFileGPS")
                                             );
                                     Servicio service = new Servicio();
-                                    service.setEndpointImagePort(response.getString("service_pathImg"));
                                     service.setEndpointImageBackground(response.getString("service_pathPortImg"));
                                     ApiManager.setUser(user);
                                     ApiManager.setServicio(service);
@@ -240,7 +239,7 @@ public class ManagerREST {
 
     }
 
-    static public void PublicService(Servicio service,JSONObject jsonBody,String base64codeImg,String base64codeImgPort,final Context context)
+    static public void PublicService(Servicio service,JSONObject jsonBody,String base64codeImgPort,final Context context)
     {
         RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
                 .getRequestQueue();
@@ -261,7 +260,6 @@ public class ManagerREST {
             jsonBody.put("colonia",service.getColonia());
             jsonBody.put("calle",service.getCalle());
             jsonBody.put("numero",service.getNum());
-            jsonBody.put("imgBase64Service","");
             jsonBody.put("imgBase64BackgroundService",base64codeImgPort);
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,

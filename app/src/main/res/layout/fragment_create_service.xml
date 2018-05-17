@@ -59,13 +59,6 @@
                     android:textColor="@color/white"
                     android:textSize="24sp"
                     android:textStyle="bold" />
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/imgServiceCreateService"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="end|bottom"
-                    android:contentDescription="@string/background"
-                    android:src="@drawable/img_service"/>
             </FrameLayout>
             <TextView
                 android:id="@+id/txtViewInfoCreateService"
@@ -127,18 +120,17 @@
                 android:layout_marginStart="10dp"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
+                >
 
                 <TextView
                     android:id="@+id/txtViewImgBackgroundCreateService"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start|top"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
                     android:text="@string/desc_background_img_service"
                     android:textSize="18sp" />
 
@@ -146,34 +138,12 @@
                     android:id="@+id/imgBtnBackgroundCreateService"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end|top"
-                    android:layout_marginBottom="60dp"
-                    android:layout_marginEnd="20dp"
                     android:contentDescription="@string/desc_search_img"
+                    android:layout_marginEnd="10dp"
                     app:srcCompat="@drawable/ic_action_search_holo_light" />
 
-                <TextView
-                    android:id="@+id/txtViewImgCreateService"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|start"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginStart="20dp"
-                    android:text="@string/desc_img_service"
-                    android:textSize="18sp" />
 
-
-                <ImageButton
-                    android:id="@+id/imgBtnUserCreateService"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|bottom"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginTop="60dp"
-                    android:contentDescription="@string/desc_search_img"
-                    app:srcCompat="@drawable/ic_action_search_holo_light" />
-
-            </FrameLayout>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"

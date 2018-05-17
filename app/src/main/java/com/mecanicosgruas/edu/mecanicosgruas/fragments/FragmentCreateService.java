@@ -57,17 +57,14 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
     Button btnGuardar;
     EditText editTxtNameCreateService;
     EditText editTxtDescCreateService;
-    ImageButton imgBtnUserCreateService;
     ImageButton imgBtnBackgroundCreateService;
     EditText editTxtCiudadCreateService;
     EditText editTxtColoniaCreateService;
     EditText editTxtCalleCreateService;
     EditText editTextNumCreateService;
-    Bitmap imgService;
     Bitmap imgServicePort;
     CircleImageView imgViewService;
     ImageView imgViewServicePort;
-    boolean imageSelect;
 
     @Nullable
     @Override
@@ -78,14 +75,12 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
         listViewHorario = (ListView)myview.findViewById(R.id.idListViewHorarios);
         editTxtNameCreateService = (EditText)myview.findViewById(R.id.editTxtNameServiceCreateService);
         editTxtDescCreateService = (EditText)myview.findViewById(R.id.editTxtDescCreateService);
-        imgBtnUserCreateService = (ImageButton)myview.findViewById(R.id.imgBtnUserCreateService);
         imgBtnBackgroundCreateService = (ImageButton)myview.findViewById(R.id.imgBtnBackgroundCreateService);
         editTxtCiudadCreateService = (EditText)myview.findViewById(R.id.editTxtCuidadCreateService);
         editTxtColoniaCreateService = (EditText)myview.findViewById(R.id.editTxtColoniaCreateService);
         editTxtCalleCreateService = (EditText)myview.findViewById(R.id.editTxtCalleCreateService);
         editTextNumCreateService = (EditText)myview.findViewById(R.id.editTxtNumCreateService);
 
-        imgViewService = (CircleImageView)myview.findViewById(R.id.imgServiceCreateService);
         imgViewServicePort  = (ImageView)myview.findViewById(R.id.imgBackgroundServiceCreateService);
         return myview;
     }
@@ -126,18 +121,10 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
                     setEnabledView(false);
                 }
 
-                imgBtnUserCreateService.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        imageSelect= true;
-                        ApiManager.ImageSelect(myActivity);
-                    }
-                });
 
                 imgBtnBackgroundCreateService.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        imageSelect= false;
                         ApiManager.ImageSelect(myActivity);
                     }
                 });
@@ -152,7 +139,6 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
         //listViewHorario.setEnabled(enabledView);
         editTxtNameCreateService.setEnabled(enabledView);
         editTxtDescCreateService.setEnabled(enabledView);
-        imgBtnUserCreateService.setEnabled(enabledView);
         imgBtnBackgroundCreateService.setEnabled(enabledView);
         editTxtCiudadCreateService.setEnabled(enabledView);
         editTxtColoniaCreateService.setEnabled(enabledView);
@@ -185,16 +171,10 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
         {
             // Guardamos el thumbnail de la imagen en un archivo con el siguiente nombre
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-            if(imageSelect)
-            {
-                imgService = bitmap;
-                //imgViewService.setImageBitmap(imgService);
-            }
-            else
-            {
+
                 imgServicePort  = bitmap;
                 imgViewServicePort.setImageBitmap(imgServicePort);
-            }
+
 
             // mImageView.setImageBitmap(bitmap);
         } else if(resultCode == RESULT_OK && ApiManager.STORAGE_IMAGE == requestCode)
@@ -204,16 +184,10 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
 
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(pathImage,bmOptions);
-            if(imageSelect)
-            {
-                imgService = bitmap;
-                //imgViewService.setImageBitmap(imgService);
-            }
-            else
-            {
+
                 imgServicePort  = bitmap;
                 imgViewServicePort.setImageBitmap(imgServicePort);
-            }
+
 
             Log.i("Path Sotrage",pathImage);
 
@@ -298,7 +272,7 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
                 jsonHorario.put("dom",listaHorario.get(6).getHorarioInicial() + ApiManager.SPLIT_CODE + listaHorario.get(6).getHorarioFinal());
             }
 
-            ManagerREST.PublicService(s,jsonHorario, "",ImageUtil.encodeBase64(imgServicePort),myActivity);
+            ManagerREST.PublicService(s,jsonHorario, ImageUtil.encodeBase64(imgServicePort),myActivity);
 
         } catch(JSONException ex)
         {

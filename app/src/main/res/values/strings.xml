@@ -19,7 +19,7 @@
     <string name="background">Background</string>
     <string name="desc_servicio">Servicio</string>
     <string name="titulo_service">Titulo del Servicio</string>
-    <string name="select_images">Seleccionar imagenes</string>
+    <string name="select_images">Seleccionar imagen</string>
     <string name="desc_background_img_service">Portada del servicio</string>
     <string name="desc_search_img">Buscar Image</string>
     <string name="desc_img_service">Imagen servicio</string>
