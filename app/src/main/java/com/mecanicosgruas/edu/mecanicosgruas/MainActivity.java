@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
+
 // Inicio de sesion
 public class MainActivity extends AppCompatActivity {
 
@@ -35,17 +37,13 @@ public class MainActivity extends AppCompatActivity {
                 name = editTxtUser.getText().toString();
                 password = editTxtPassword.getText().toString();
                 //Validar edit vacios
-                if(name.trim().isEmpty() || password.trim().isEmpty())
+                if(name.toString().trim().isEmpty() || password.toString().trim().isEmpty())
                 {
-                    Toast.makeText(MainActivity.this,"Usuario o Contraseña no son correctos" , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this,"Falta llenar campos" , Toast.LENGTH_SHORT).show();
                     return;
                 }
-                //Validar usuario existente
-                    //Por definir
-                Intent intent;
-                intent = new Intent(MainActivity.this,PantallaInicio.class);
-
-                startActivity(intent);
+                //Validar desde el servidor, iniciar sesion
+                ManagerREST.LoginUser(name,password,MainActivity.this);
             }
         });
 

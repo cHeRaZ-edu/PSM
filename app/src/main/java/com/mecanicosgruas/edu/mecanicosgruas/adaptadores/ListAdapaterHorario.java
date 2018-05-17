@@ -3,7 +3,9 @@ package com.mecanicosgruas.edu.mecanicosgruas.adaptadores;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.mecanicosgruas.edu.mecanicosgruas.R;
@@ -49,8 +51,43 @@ public class ListAdapaterHorario extends BaseAdapter {
                     .inflate(R.layout.layout_item_horario,null);
         }
         TextView txtViewDiaSemana = viewTemp.findViewById(R.id.txtView_diaSemana);
+        Spinner spinnerHoraIni = viewTemp.findViewById(R.id.spinnerHorarioIni);
+        Spinner spinnerHoraFinal = viewTemp.findViewById(R.id.spinnerHorarioFinal);
+
         HorarioClass horario = listHorario.get(position);
         txtViewDiaSemana.setText(horario.getDiaSemana());
+
+           final int pos = position;
+
+        //if(!horario.getHorarioFinal().equals(spinnerHoraFinal.getSelectedItem().toString()))
+        horario.setHorarioFinal(spinnerHoraFinal.getSelectedItem().toString());
+        spinnerHoraIni.setOnItemSelectedListener(null);
+        spinnerHoraIni.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Spinner sp = adapterView.findViewById(R.id.spinnerHorarioIni);
+                listHorario.get(pos).setHorarioInicial(sp.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        spinnerHoraFinal.setOnItemSelectedListener(null);
+        spinnerHoraFinal.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Spinner sp = adapterView.findViewById(R.id.spinnerHorarioFinal);
+                listHorario.get(pos).setHorarioFinal(sp.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         return viewTemp;
     }

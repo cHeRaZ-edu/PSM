@@ -1,29 +1,54 @@
 package com.mecanicosgruas.edu.mecanicosgruas.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
+import com.mecanicosgruas.edu.mecanicosgruas.ImageUtil.ImageUtil;
+import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
+import com.mecanicosgruas.edu.mecanicosgruas.ReadPath.ReadPathUtil;
+import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
+import com.mecanicosgruas.edu.mecanicosgruas.model.User;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.text.Normalizer;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by LUNA on 03/04/2018.
  */
 
-public class FragmentSettings extends Fragment {
+public class FragmentSettings extends Fragment implements PantallaInicio.DataReceivedListener  {
     View myFragmentView;
-    Activity myActivity;
+    PantallaInicio myActivity;
+
+    CircleImageView imgViewImagePerfil;
+    ImageView imgViewImageBackground;
     //Variables
+    TextView nickcname;
     Button btnEdit;
     EditText editTxtNombre;
     EditText editTxtApellido;
@@ -32,11 +57,15 @@ public class FragmentSettings extends Fragment {
     ImageButton btnImgPerfilUser;
     EditText editTxtTelefono;
     Spinner spinnerLenguaje;
+    Bitmap imgPerfil;
+    Bitmap imgPortada;
+    boolean imageSelect;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         myFragmentView = inflater.inflate(R.layout.fragment_settings,container,false);
-        myActivity = getActivity();
+        myActivity = (PantallaInicio) getActivity();
+        myActivity.setDataReceivedListener(this);
         return myFragmentView;
     }
 
@@ -49,6 +78,7 @@ public class FragmentSettings extends Fragment {
         String telefono = "12345678";
 
         //Get view
+        nickcname = (TextView)myFragmentView.findViewById(R.id.txtViewNickname);
         btnEdit = (Button) myFragmentView.findViewById(R.id.btnEditCustom);
         editTxtNombre = (EditText)myFragmentView.findViewById(R.id.editTxtNameCustom);
         editTxtApellido = (EditText)myFragmentView.findViewById(R.id.editTxtApellidoCustom);
@@ -58,6 +88,10 @@ public class FragmentSettings extends Fragment {
         editTxtTelefono = (EditText)myFragmentView.findViewById(R.id.editTxtTelefonoCustom);
         spinnerLenguaje = (Spinner)myFragmentView.findViewById(R.id.spinnerLenguajeCustom);
 
+        imgViewImagePerfil  = (CircleImageView)myFragmentView.findViewById(R.id.imgViewUserEdit);
+        imgViewImageBackground  =(ImageView)myFragmentView.findViewById(R.id.imgViewBackgroundEdit);
+
+
         editTxtNombre.setText(name.toString());
         editTxtApellido.setText(apelllido.toString());
         editTxtTelefono.setText(telefono.toString());
@@ -66,6 +100,8 @@ public class FragmentSettings extends Fragment {
         setEnabledView(false);
 
         BtnEventEdit();
+
+        UpdatePerfil();
 
     }
     private void setEnabledView(boolean enabledView)
@@ -91,9 +127,43 @@ public class FragmentSettings extends Fragment {
                 {
                     if(validateSettings())
                         return;
+
+                    String nameUser = editTxtNombre.getText().toString();
+                    String apellidoUser = editTxtApellido.getText().toString();
+                    nameUser = Normalizer.normalize(nameUser, Normalizer.Form.NFD);
+                    nameUser = nameUser.replaceAll("[^\\p{ASCII}]", "");
+                    apellidoUser = Normalizer.normalize(apellidoUser, Normalizer.Form.NFD);
+                    apellidoUser = apellidoUser.replaceAll("[^\\p{ASCII}]", "");
+                    User usuario = new User(
+                            ApiManager.getUser().getNickname(),
+                            nameUser,
+                            apellidoUser,
+                            ApiManager.getUser().getEmail(),
+                            "",
+                            editTxtTelefono.getText().toString()
+                    );
+
+                    ManagerREST.UpdateUser(usuario, ImageUtil.encodeBase64(imgPerfil),ImageUtil.encodeBase64(imgPortada),myActivity,myActivity);
+
                     btnEdit.setText("Editar");
                     setEnabledView(false);
                 }
+            }
+        });
+
+        btnImgPerfilUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageSelect= true;
+                ApiManager.ImageSelect(myActivity);
+            }
+        });
+
+        btnImgBackground.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageSelect = false;
+                ApiManager.ImageSelect(myActivity);
             }
         });
     }
@@ -108,7 +178,66 @@ public class FragmentSettings extends Fragment {
             Toast.makeText(myActivity.getApplicationContext(),"Campo Vacio",Toast.LENGTH_LONG).show();
             return true;
         }
-        Toast.makeText(myActivity.getApplicationContext(),"Campo lleno",Toast.LENGTH_LONG).show();
+        //Toast.makeText(myActivity.getApplicationContext(),"Campo lleno",Toast.LENGTH_LONG).show();
         return false;
     }
+
+    void UpdatePerfil()
+    {
+        if(ApiManager.getUser()!=null)
+        {
+            nickcname.setText(ApiManager.getUser().getNickname());
+            editTxtNombre.setText(ApiManager.getUser().getName());
+            editTxtApellido.setText(ApiManager.getUser().getLast_name());
+            txtViewEmail.setText(ApiManager.getUser().getEmail());
+            editTxtTelefono.setText(ApiManager.getUser().getTelefono());
+
+            imgPerfil = ((BitmapDrawable)myActivity.imagViewPerfil.getDrawable()).getBitmap();
+            imgPortada = ((BitmapDrawable)myActivity.imgViewBackground.getDrawable()).getBitmap();
+            imgViewImagePerfil.setImageBitmap(imgPerfil);
+            imgViewImageBackground.setImageBitmap(imgPortada);
+        }
+    }
+
+    @Override
+    public void onReceived(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && ApiManager.PHOTO_SHOT == requestCode)
+        {
+            // Guardamos el thumbnail de la imagen en un archivo con el siguiente nombre
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            if(imageSelect)
+            {
+                imgPerfil = bitmap;
+                imgViewImagePerfil.setImageBitmap(imgPerfil);
+            }
+            else
+            {
+                imgPortada  = bitmap;
+                imgViewImageBackground.setImageBitmap(imgPortada);
+            }
+
+            // mImageView.setImageBitmap(bitmap);
+        } else if(resultCode == RESULT_OK && ApiManager.STORAGE_IMAGE == requestCode)
+        {
+            Uri uri = data.getData();
+            String pathImage = ReadPathUtil.getRealPathFromURI_API19(myActivity,uri);
+
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            Bitmap bitmap = BitmapFactory.decodeFile(pathImage,bmOptions);
+            if(imageSelect)
+            {
+                imgPerfil = bitmap;
+                imgViewImagePerfil.setImageBitmap(imgPerfil);
+            }
+            else
+            {
+                imgPortada  = bitmap;
+                imgViewImageBackground.setImageBitmap(imgPortada);
+            }
+
+            Log.i("Path Sotrage",pathImage);
+
+        }
+    }
+
 }

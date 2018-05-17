@@ -5,7 +5,6 @@
     android:id="@+id/drawer_layout_Inicio"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     app:theme="@style/InicioTheme"
     tools:context="com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio"
     tools:openDrawer="start">

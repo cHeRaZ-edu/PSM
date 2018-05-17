@@ -59,13 +59,13 @@
                     android:textColor="@color/white"
                     android:textSize="24sp"
                     android:textStyle="bold" />
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/imgServiceCreateService"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_gravity="end|bottom"
                     android:contentDescription="@string/background"
-                    app:srcCompat="@drawable/img_service"/>
+                    android:src="@drawable/img_service"/>
             </FrameLayout>
             <TextView
                 android:id="@+id/txtViewInfoCreateService"

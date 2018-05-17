@@ -26,9 +26,9 @@
         <activity
             android:name=".PantallaInicio"
             android:label="@string/screen_title"
-            android:theme="@style/InicioTheme" />
+            android:theme="@style/InicioTheme"
+            android:screenOrientation="portrait"/>
         <activity android:name=".ActivityRegistro" />
-        <activity android:name=".ServicioDisplayActivity"></activity>
     </application>
 
 </manifest>

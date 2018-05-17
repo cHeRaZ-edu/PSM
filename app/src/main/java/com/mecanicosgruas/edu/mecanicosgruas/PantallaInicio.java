@@ -18,36 +18,48 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 
+import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.ReadPath.ReadPathUtil;
+import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentCreateService;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentInbox;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentListService;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentService;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentSettings;
-import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
+import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class PantallaInicio extends AppCompatActivity {
-    public final int STORAGE_IMAGE = 200;
-    public final int PHOTO_SHOT = 300;
+
 
     Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private String fragmentTag="";
+    public CircleImageView imagViewPerfil;
+    public ImageView imgViewBackground;
 
+    DataReceivedListener listener;
+
+    public void setDataReceivedListener(DataReceivedListener listener) {
+        this.listener = listener;
+    }
+
+    public interface DataReceivedListener {
+        void onReceived(int requestCode, int resultCode, Intent data);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -82,6 +94,13 @@ public class PantallaInicio extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbarIniId);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_Inicio);
         navigationView = (NavigationView)findViewById(R.id.nav_panel);
+        View header  = navigationView.getHeaderView(0);
+        imagViewPerfil = (CircleImageView)header.findViewById(R.id.imgViewUserPanel);
+        imgViewBackground = (ImageView)header.findViewById(R.id.imgViewBackgroundUserPanel);
+
+
+
+
         //setup hardcore toolbar
         int idColor = Resources.getSystem().getColor(android.R.color.background_light);
         toolbar.setTitle("Inicio");
@@ -94,8 +113,10 @@ public class PantallaInicio extends AppCompatActivity {
         //Use my toolbar as actionbar
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //changeFragment(new FragmentListService(),"inicio");
+        if(fragmentTag.equals(""))
+        changeFragment(new FragmentListService(),"inicio");
 
+        UpdateImage();
 
 
 
@@ -263,41 +284,34 @@ public class PantallaInicio extends AppCompatActivity {
                 .show();
     }
 
-    public void ImageSelect()
-    {
-        AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
-        } else {
-            builder = new AlertDialog.Builder(this);
-        }
-        builder.setTitle("Medio")
-                .setMessage("Elige la opcion para la imagen")
-                .setPositiveButton("Foto", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // continue with delete
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(intent, PHOTO_SHOT);
-                    }
-                })
-                .setNegativeButton("SD", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-                        i.setType("image/*");
-                        i.putExtra(Intent.EXTRA_LOCAL_ONLY,true);
-                        startActivityForResult(Intent.createChooser(i,"Selecciona una foto"),STORAGE_IMAGE);
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .show();
 
+    public void UpdateImage()
+    {
+        if(ApiManager.getUser().getEndPointImagePerfil()!=null)
+        {
+            Picasso.with(PantallaInicio.this)
+                    .load( ManagerREST.getURI() + ApiManager.getUser().getEndPointImagePerfil())
+                    .placeholder(R.drawable.user)
+                    .into(imagViewPerfil);
+        }
+
+        if(ApiManager.getUser().getEndPointImageBackground()!=null)
+        {
+            Picasso.with(PantallaInicio.this)
+                    .load( ManagerREST.getURI() + ApiManager.getUser().getEndPointImageBackground())
+                    .placeholder(R.drawable.background)
+                    .into(imgViewBackground);
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if (listener != null) {
+            listener.onReceived(requestCode, resultCode, data);
+        }
+        /*
         if (resultCode == RESULT_OK && PHOTO_SHOT == requestCode)
         {
             // Guardamos el thumbnail de la imagen en un archivo con el siguiente nombre
@@ -309,9 +323,10 @@ public class PantallaInicio extends AppCompatActivity {
             Uri uri = data.getData();
             String pathImage = ReadPathUtil.getRealPathFromURI_API19(PantallaInicio.this,uri);
 
-
+            Log.i("Path Sotrage",pathImage);
 
         }
+        */
     }
 
 }

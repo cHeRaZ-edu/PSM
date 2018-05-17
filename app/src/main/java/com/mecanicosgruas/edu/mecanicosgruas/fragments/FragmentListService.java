@@ -1,10 +1,7 @@
 package com.mecanicosgruas.edu.mecanicosgruas.fragments;
 
-import android.app.Activity;
 import android.support.v4.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +13,6 @@ import android.widget.Toast;
 
 import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
-import com.mecanicosgruas.edu.mecanicosgruas.ServicioDisplayActivity;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdaptadorPantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
 
@@ -74,9 +70,6 @@ public class FragmentListService extends Fragment {
                 String data = ((TextView)view.findViewById(R.id.txtViewNameService)).getText().toString();
                 Toast.makeText(activity.getApplicationContext(),data + ": " + Integer.toString(position),Toast.LENGTH_LONG).show();
                 activity.changeFragment(new FragmentService(), "servicio","Servicio");
-                //Intent intent = new Intent(activity, ServicioDisplayActivity.class);
-                //intent.putExtra("serviceSelect", testLista.get(position));
-                //startActivity(intent);
             }
         });
     }

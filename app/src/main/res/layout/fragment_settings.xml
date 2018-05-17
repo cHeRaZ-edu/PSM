@@ -23,12 +23,23 @@
                     android:contentDescription="@string/desc_background_user"
                     app:srcCompat="@drawable/background" />
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/imgViewUserEdit"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:contentDescription="@string/desc_img_user"
-                    app:srcCompat="@drawable/user" />
+                    android:src="@drawable/user" />
+                <TextView
+                    android:id="@+id/txtViewNickname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/desc_nickname"
+                    android:textSize="24sp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginBottom="5dp"
+                    android:textStyle="bold"
+                    android:textColor="#fff"/>
             </FrameLayout>
 
             <TextView
