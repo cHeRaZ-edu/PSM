@@ -1,6 +1,5 @@
 package com.mecanicosgruas.edu.mecanicosgruas.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -28,10 +27,9 @@ import com.mecanicosgruas.edu.mecanicosgruas.R;
 import com.mecanicosgruas.edu.mecanicosgruas.ReadPath.ReadPathUtil;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.model.User;
-import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.text.Normalizer;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -60,6 +58,8 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
     Bitmap imgPerfil;
     Bitmap imgPortada;
     boolean imageSelect;
+    String encodeBase64Portada;
+    String encodeBase64Img;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -143,7 +143,8 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
                             editTxtTelefono.getText().toString()
                     );
 
-                    ManagerREST.UpdateUser(usuario, ImageUtil.encodeBase64(imgPerfil),ImageUtil.encodeBase64(imgPortada),myActivity,myActivity);
+                    if(ApiManager.isInternetConnection(getContext()))
+                    ManagerREST.UpdateUser(usuario, encodeBase64Img,encodeBase64Portada,myActivity,myActivity);
 
                     btnEdit.setText("Editar");
                     setEnabledView(false);
@@ -201,24 +202,37 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
 
     @Override
     public void onReceived(int requestCode, int resultCode, Intent data) {
+
         if (resultCode == RESULT_OK && ApiManager.PHOTO_SHOT == requestCode)
         {
+
             // Guardamos el thumbnail de la imagen en un archivo con el siguiente nombre
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+
             if(imageSelect)
             {
                 imgPerfil = bitmap;
                 imgViewImagePerfil.setImageBitmap(imgPerfil);
+
+
+                        if(bitmap!=null)
+                        encodeBase64Img = ImageUtil.encodeBase64(bitmap);
+
             }
             else
             {
                 imgPortada  = bitmap;
                 imgViewImageBackground.setImageBitmap(imgPortada);
+
+                    if(bitmap!=null)
+                    encodeBase64Portada =ImageUtil.encodeBase64(bitmap);
+
             }
 
             // mImageView.setImageBitmap(bitmap);
         } else if(resultCode == RESULT_OK && ApiManager.STORAGE_IMAGE == requestCode)
         {
+
             Uri uri = data.getData();
             String pathImage = ReadPathUtil.getRealPathFromURI_API19(myActivity,uri);
 
@@ -228,16 +242,30 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
             {
                 imgPerfil = bitmap;
                 imgViewImagePerfil.setImageBitmap(imgPerfil);
+
+                    if(bitmap!=null)
+                        encodeBase64Img = ImageUtil.encodeBase64(bitmap);
+
             }
             else
             {
                 imgPortada  = bitmap;
                 imgViewImageBackground.setImageBitmap(imgPortada);
+
+                    if(bitmap!=null)
+                        encodeBase64Portada = ImageUtil.encodeBase64(bitmap);
+
             }
 
             Log.i("Path Sotrage",pathImage);
 
+
+
         }
     }
 
+    @Override
+    public void onShutdown() {
+
+    }
 }

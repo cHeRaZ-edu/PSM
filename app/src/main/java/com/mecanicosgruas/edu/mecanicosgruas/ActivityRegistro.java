@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.model.User;
 
@@ -82,6 +83,7 @@ public class ActivityRegistro extends AppCompatActivity {
                                             telefono.getText().toString()
                                             );
                     //Registrar desde el servidor
+                    if(ApiManager.isInternetConnection(getApplicationContext()))
                     ManagerREST.RegisterUser(usuario,ActivityRegistro.this);
                 }
             }

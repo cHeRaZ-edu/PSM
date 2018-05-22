@@ -1,25 +1,22 @@
 package com.mecanicosgruas.edu.mecanicosgruas.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
@@ -29,18 +26,18 @@ import com.mecanicosgruas.edu.mecanicosgruas.R;
 import com.mecanicosgruas.edu.mecanicosgruas.ReadPath.ReadPathUtil;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdapaterHorario;
-import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdaptadorPantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.model.HorarioClass;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
+import java.util.concurrent.ExecutionException;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -55,6 +52,7 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
     View myview;
     ListView listViewHorario;
     Button btnGuardar;
+    TextView txtViewtitleService;
     EditText editTxtNameCreateService;
     EditText editTxtDescCreateService;
     ImageButton imgBtnBackgroundCreateService;
@@ -63,14 +61,18 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
     EditText editTxtCalleCreateService;
     EditText editTextNumCreateService;
     Bitmap imgServicePort;
-    CircleImageView imgViewService;
     ImageView imgViewServicePort;
+    String encodeBase64Img;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myview = inflater.inflate(R.layout.fragment_create_service,container,false);
+
+        if(ApiManager.isInternetConnection(getContext()))
+        ManagerREST.FindService(getContext(),this,null,1);
         //Get View
+        txtViewtitleService = (TextView)myview.findViewById(R.id.txtViewTitleServiceCreateService);
         btnGuardar = (Button)myview.findViewById(R.id.btnGuardarCreateService);
         listViewHorario = (ListView)myview.findViewById(R.id.idListViewHorarios);
         editTxtNameCreateService = (EditText)myview.findViewById(R.id.editTxtNameServiceCreateService);
@@ -149,7 +151,8 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
     void InflarListaDiasSemana()
     {
 
-
+        if(adapter!=null)
+            return;
 
         listaHorario.add(new HorarioClass("Lunes"));
         listaHorario.add(new HorarioClass("Martes"));
@@ -158,41 +161,13 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
         listaHorario.add(new HorarioClass("Viernes"));
         listaHorario.add(new HorarioClass("Sabado"));
         listaHorario.add(new HorarioClass("Domingo"));
-
-        adapter = new ListAdapaterHorario(listaHorario);
+        List<String> listString = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.string_array_hours)));
+        adapter = new ListAdapaterHorario(listaHorario,listString);
 
         listViewHorario.setAdapter(adapter);
     }
 
-    @Override
-    public void onReceived(int requestCode, int resultCode, Intent data) {
 
-        if (resultCode == RESULT_OK && ApiManager.PHOTO_SHOT == requestCode)
-        {
-            // Guardamos el thumbnail de la imagen en un archivo con el siguiente nombre
-            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-
-                imgServicePort  = bitmap;
-                imgViewServicePort.setImageBitmap(imgServicePort);
-
-
-            // mImageView.setImageBitmap(bitmap);
-        } else if(resultCode == RESULT_OK && ApiManager.STORAGE_IMAGE == requestCode)
-        {
-            Uri uri = data.getData();
-            String pathImage = ReadPathUtil.getRealPathFromURI_API19(myActivity,uri);
-
-            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-            Bitmap bitmap = BitmapFactory.decodeFile(pathImage,bmOptions);
-
-                imgServicePort  = bitmap;
-                imgViewServicePort.setImageBitmap(imgServicePort);
-
-
-            Log.i("Path Sotrage",pathImage);
-
-        }
-    }
 
     private boolean ValidarDatos()
     {
@@ -271,8 +246,8 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
             {
                 jsonHorario.put("dom",listaHorario.get(6).getHorarioInicial() + ApiManager.SPLIT_CODE + listaHorario.get(6).getHorarioFinal());
             }
-
-            ManagerREST.PublicService(s,jsonHorario, ImageUtil.encodeBase64(imgServicePort),myActivity);
+            if(ApiManager.isInternetConnection(getContext()))
+            ManagerREST.PublicService(s,jsonHorario, encodeBase64Img,myActivity);
 
         } catch(JSONException ex)
         {
@@ -281,4 +256,65 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
 
     }
 
+    public void updateData(){
+        txtViewtitleService.setText(ApiManager.getServicio().getNombreServicio());
+        editTxtNameCreateService.setText(ApiManager.getServicio().getNombreServicio());
+        editTxtDescCreateService.setText(ApiManager.getServicio().getDescService());
+        editTxtCiudadCreateService.setText(ApiManager.getServicio().getCiudad());
+        editTxtColoniaCreateService.setText(ApiManager.getServicio().getColonia());
+        editTxtCalleCreateService.setText(ApiManager.getServicio().getCalle());
+        editTextNumCreateService.setText(ApiManager.getServicio().getNum());
+        List<String> listString = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.string_array_hours)));
+
+        listaHorario = ApiManager.getServicio().getListHorario();
+        adapter = new ListAdapaterHorario(listaHorario,listString);
+
+        listViewHorario.setAdapter(adapter);
+
+        if(ApiManager.getServicio().getEndpointImageBackground()!=null)
+        {
+            Picasso.with(myActivity)
+                    .load( ManagerREST.getURI() + ApiManager.getServicio().getEndpointImageBackground())
+                    .placeholder(R.drawable.background_service)
+                    .into(imgViewServicePort);
+        }
+    }
+
+    @Override
+    public void onReceived(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && ApiManager.PHOTO_SHOT == requestCode)
+        {
+            // Guardamos el thumbnail de la imagen en un archivo con el siguiente nombre
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+
+            imgServicePort  = bitmap;
+            imgViewServicePort.setImageBitmap(imgServicePort);
+
+
+                if(bitmap!=null)
+                    encodeBase64Img = ImageUtil.encodeBase64(bitmap);
+
+            // mImageView.setImageBitmap(bitmap);
+        } else if(resultCode == RESULT_OK && ApiManager.STORAGE_IMAGE == requestCode)
+        {
+            Uri uri = data.getData();
+            String pathImage = ReadPathUtil.getRealPathFromURI_API19(myActivity,uri);
+
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            Bitmap bitmap = BitmapFactory.decodeFile(pathImage,bmOptions);
+
+            imgServicePort  = bitmap;
+            imgViewServicePort.setImageBitmap(imgServicePort);
+
+            if(bitmap!=null)
+                encodeBase64Img = ImageUtil.encodeBase64(bitmap);
+            Log.i("Path Sotrage",pathImage);
+
+        }
+    }
+
+    @Override
+    public void onShutdown() {
+
+    }
 }

@@ -1,5 +1,9 @@
 package com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection;
 
+import android.app.Activity;
+import android.app.DownloadManager;
+import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -15,8 +19,17 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.google.gson.JsonObject;
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
+import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentChat;
+import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentCreateService;
+import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentInbox;
+import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentListService;
+import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentService;
+import com.mecanicosgruas.edu.mecanicosgruas.model.HorarioClass;
+import com.mecanicosgruas.edu.mecanicosgruas.model.Inbox;
+import com.mecanicosgruas.edu.mecanicosgruas.model.Message;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
 import com.mecanicosgruas.edu.mecanicosgruas.model.User;
 
@@ -24,17 +37,25 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by LUNA on 15/05/2018.
  */
 
 public class ManagerREST {
-    private static final String URI = "http://appmecanicogruas.servehttp.com";
+    private static final String URI = "http://movilesapp.servehttp.com";
     private static final String ENDPOINT_REGISTER = "/register/user";
     private static final String ENDPOINT_LOGIN = "/login";
     private static final String ENDPOINT_UPDATE_USER  = "/update/user";
-    private static final  String ENDPOINT_PUBLIC_SERVICE = "/update/service";
+    private static final String ENDPOINT_PUBLIC_SERVICE = "/update/service";
+    private static final String ENDPOINT_FIND_SERVICE = "/find/service";
+    private static final String ENDPOINT_GET_SERVICES = "/get/services";
+    private static final String ENDPOINT_FAVORITO = "/like/favorito";
+    private static final String ENDPOINT_SEND_MESSAGE = "/message/user";
+    private static final String ENDPOINT_GET_USER_MESSAGE = "/message/list_user";
+    private static final String ENDPOINT_GET_CHAT_RAW = "/message/chat/user";
 
     public static String getURI() {
         return URI;
@@ -48,6 +69,7 @@ public class ManagerREST {
             RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
                     .getRequestQueue();
 
+
             final String URL = URI + ENDPOINT_REGISTER;
 
             JSONObject jsonBody = new JSONObject();
@@ -59,12 +81,14 @@ public class ManagerREST {
             jsonBody.put("password",user.getPassword());
             jsonBody.put("telefono",user.getTelefono());
 
+
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                     (Request.Method.POST, URL, jsonBody, new Response.Listener<JSONObject>() {
 
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
+
                                 if(response.getString("Status")!=null)
                                 {
                                     Toast.makeText(context.getApplicationContext(),response.getString("messageResponse"),Toast.LENGTH_LONG).show();
@@ -87,6 +111,7 @@ public class ManagerREST {
 
             ConnectionREST.getInstance(context).addToRequestQueue(jsonObjectRequest);
 
+
         } catch( JSONException ex)
         {
             ex.printStackTrace();
@@ -108,11 +133,14 @@ public class ManagerREST {
             jsonBody.put("nickname",nickname);
             jsonBody.put("password",password);
 
+
+
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                     (Request.Method.POST, URL, jsonBody, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             // Get  endpoint user
+
                             try {
                                 if(response==null)
                                     return;
@@ -130,10 +158,7 @@ public class ManagerREST {
                                                     response.getString("user_pathPortImg"),
                                                     response.getString("pathFileGPS")
                                             );
-                                    Servicio service = new Servicio();
-                                    service.setEndpointImageBackground(response.getString("service_pathPortImg"));
                                     ApiManager.setUser(user);
-                                    ApiManager.setServicio(service);
 
                                     ApiManager.StartAcivtyInicio(context);
                                 }
@@ -147,6 +172,7 @@ public class ManagerREST {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
+
                             Toast.makeText(context.getApplicationContext(),"El Servidor no esta disponible",Toast.LENGTH_LONG).show();
                         }
                     });
@@ -155,6 +181,8 @@ public class ManagerREST {
 
 
             ConnectionREST.getInstance(context).addToRequestQueue(jsonObjectRequest);
+
+
         } catch(JSONException ex)
         {
             ex.printStackTrace();
@@ -208,11 +236,7 @@ public class ManagerREST {
                                             response.getString("user_pathPortImg"),
                                             response.getString("pathFileGPS")
                                     );
-                            Servicio service = new Servicio();
-                            service.setEndpointImagePort(response.getString("service_pathImg"));
-                            service.setEndpointImageBackground(response.getString("service_pathPortImg"));
                             ApiManager.setUser(user);
-                            ApiManager.setServicio(service);
                             activity.UpdateImage();
                         }
 
@@ -298,5 +322,442 @@ public class ManagerREST {
         }
     }
 
+    static public void FindService(final Context context, final FragmentCreateService fragment, final FragmentService fragemtnService, final int Mode)
+    {
+        RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
+                .getRequestQueue();
+
+        try
+        {
+            final String URL = URI + ENDPOINT_FIND_SERVICE;
+            JSONObject jsonBody = new JSONObject();
+
+            if(Mode==1)
+                jsonBody.put("nickname",ApiManager.getUser().getNickname());
+            else
+                jsonBody.put("nickname",ApiManager.getService_select().getNickname());
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
+                    URL, jsonBody, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try
+                    {
+                        if(response==null)
+                            return;
+
+                        if(response.getString("Status").equals("200"))
+                        {
+                            Servicio s = new Servicio();
+                            s.setNickname(response.getString("nickname"));
+                            s.setNombreServicio(response.getString("nameService"));
+                            s.setDescService(response.getString("descService"));
+                            s.setEndpointImageBackground(response.getString("endpointImg"));
+                            s.setCiudad(response.getString("ciudad"));
+                            s.setColonia(response.getString("colonia"));
+                            s.setCalle(response.getString("calle"));
+                            s.setNum(response.getString("num"));
+                            s.setTelefono(response.getString("telefono"));
+                            s.setEndpointImageUser(response.getString("endPointImgUser"));
+                            s.setNumStars(Float.parseFloat(response.getString("countFavoritios")));
+
+                            List<HorarioClass> listHorario = new ArrayList<>();
+
+                            if(response.has("lun"))
+                                listHorario.add(new HorarioClass("Lunes",response.getString("lun")));
+                            else
+                            {
+                                if(Mode!=2)
+                                listHorario.add(new HorarioClass("Lunes"));
+                            }
+
+
+                            if(response.has("mar"))
+                                listHorario.add(new HorarioClass("Martes",response.getString("mar")));
+                                else
+                                {
+                                    if(Mode!=2)
+                                    listHorario.add(new HorarioClass("Martes"));
+                                }
+
+                            if(response.has("mie"))
+                                listHorario.add(new HorarioClass("Miercoles",response.getString("mie")));
+                                else
+                            {
+                                if(Mode!=2)
+                                listHorario.add(new HorarioClass("Miercoles"));
+                            }
+
+
+                            if(response.has("jue"))
+                                listHorario.add(new HorarioClass("Jueves",response.getString("jue")));
+                                else
+                            {
+                                if(Mode!=2)
+                                listHorario.add(new HorarioClass("Jueves"));
+                            }
+
+
+                            if(response.has("vie"))
+                                listHorario.add(new HorarioClass("Viernes",response.getString("vie")));
+                                else
+                            {
+                                if(Mode!=2)
+                                listHorario.add(new HorarioClass("Viernes"));
+                            }
+
+                            if(response.has("sab"))
+                                listHorario.add(new HorarioClass("Sabado",response.getString("sab")));
+                                else
+                            {
+                                if(Mode!=2)
+                                listHorario.add(new HorarioClass("Sabado"));
+                            }
+
+
+                            if(response.has("dom"))
+                                listHorario.add(new HorarioClass("Domingo",response.getString("dom")));
+                                else
+                            {
+                                if(Mode!=2)
+                                listHorario.add(new HorarioClass("Domingo"));
+                            }
+
+                            s.setListHorario(listHorario);
+
+                            if(Mode==1)
+                            {
+                                ApiManager.setServicio(s);
+
+                                fragment.updateData();
+
+                            } else if(Mode==2)
+                            {
+                                ApiManager.setService_select(s);
+                                fragemtnService.updateData();
+                            }
+
+
+                        } else if(response.getString("Status").equals("202"))
+                        {
+                            ApiManager.setServicio(null);
+                        }
+
+
+
+                        Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
+                    } catch(JSONException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context.getApplicationContext(),"El Servidor no esta disponible",Toast.LENGTH_LONG).show();
+                }
+            });
+
+            ConnectionREST.getInstance(context).addToRequestQueue(jsonObjectRequest);
+
+
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static public void getService(final Context context, final FragmentListService fragment)
+    {
+        RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
+                .getRequestQueue();
+
+        try {
+
+            String URL = URI + ENDPOINT_GET_SERVICES;
+
+            JSONObject jsonBody= new JSONObject();
+            jsonBody.put("none","none");
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
+                    URL, jsonBody, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try
+                    {
+                        if(response==null)
+                            return;
+
+                        if(response.getString("Status").equals("200"))
+                        {
+                            List<Servicio> listServices = new ArrayList<>();
+                            for(int i = 0; response.has(Integer.toString(i));i++)
+                            {
+                                JSONObject jsonObject  = response.getJSONObject(Integer.toString(i));
+                                listServices.add(
+                                        new Servicio(
+                                                        jsonObject.getString("nickname"),
+                                                        jsonObject.getString("name"),
+                                                        jsonObject.getString("ciudad"),
+                                                        jsonObject.getString("telefono"),
+                                                        Float.parseFloat(jsonObject.getString("countFavoritios")),
+                                                        jsonObject.getString("endpointImg")
+                                                    )
+                                                );
+                            }
+
+                            fragment.UpdateServices(listServices);
+                        }
+
+
+
+                        Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
+                    } catch(JSONException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context.getApplicationContext(),"El Servidor no esta disponible",Toast.LENGTH_LONG).show();
+                }
+            });
+
+            ConnectionREST.getInstance(context).addToRequestQueue(jsonObjectRequest);
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static public void FavoritoService(String nicknameUser,String nicknameService,final Context context,final FragmentService fragment)
+    {
+        RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
+                .getRequestQueue();
+
+        try {
+
+            String URL = URI + ENDPOINT_FAVORITO;
+
+            JSONObject jsonBody= new JSONObject();
+            jsonBody.put("nicknameUser",nicknameUser);
+            jsonBody.put("nicknameService",nicknameService);
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
+                    URL, jsonBody, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try
+                    {
+                        if(response==null)
+                            return;
+
+                        if(response.getString("Status").equals("200"))
+                        {
+                            fragment.updateFavorito(Integer.parseInt(response.getString("countFavorito")));
+                        }
+
+                        Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
+                    } catch(JSONException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context.getApplicationContext(),"El Servidor no esta disponible",Toast.LENGTH_LONG).show();
+                }
+            });
+
+            ConnectionREST.getInstance(context).addToRequestQueue(jsonObjectRequest);
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static public void addMessage(String nicknameUser,String nicknameRevecie, String messageString, String base64CodeImg,final Context context)
+    {
+        RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
+                .getRequestQueue();
+
+        try
+        {
+            String URL = URI + ENDPOINT_SEND_MESSAGE;
+
+            JSONObject jsonBody= new JSONObject();
+            jsonBody.put("nicknameParamSend",nicknameUser);
+            jsonBody.put("nicknameParamRevecie",nicknameRevecie);
+            jsonBody.put("messageParam",messageString);
+            jsonBody.put("imgBase64Code",base64CodeImg);
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, URL, jsonBody,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try
+                        {
+                            if(response==null)
+                                return;
+
+                            if(response.getString("Status").equals("200"))
+                            {
+
+                            }
+
+                            Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
+                        } catch(JSONException ex)
+                        {
+                            ex.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context.getApplicationContext(),"El Servidor no esta disponible",Toast.LENGTH_LONG).show();
+                }
+            });
+
+
+
+            ConnectionREST.getInstance(context).addToRequestQueue(jsonObjectRequest);
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static public void get_users_message(String nickname, final Context context, final FragmentInbox fragmentInbox)
+    {
+        RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
+                .getRequestQueue();
+
+        try
+        {
+            String URL = URI + ENDPOINT_GET_USER_MESSAGE;
+
+            JSONObject jsonBody = new JSONObject();
+
+            jsonBody.put("nickname",nickname);
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                    Request.Method.POST, URL, jsonBody, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try
+                    {
+                        if(response==null)
+                            return;
+
+                        if(response.getString("Status").equals("200"))
+                        {
+                            List<Inbox> listInbox = new ArrayList<>();
+                            for(int i = 0; response.has(Integer.toString(i));i++)
+                            {
+                                JSONObject jsonUser = response.getJSONObject(Integer.toString(i));
+                                Inbox inbox = new Inbox();
+                                inbox.setNickname(jsonUser.getString("nickname"));
+                                inbox.setEndPointImagePerfil(jsonUser.getString("endpointImg"));
+                                inbox.setLast_message(jsonUser.getString("last_message"));
+                                inbox.setTimeSend(jsonUser.getString("timeSend"));
+                                listInbox.add(inbox);
+                            }
+
+                            fragmentInbox.uodateListUser(listInbox);
+                        }
+
+                        Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
+
+                    } catch(JSONException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context.getApplicationContext(),"El Servidor no esta disponible",Toast.LENGTH_LONG).show();
+                }
+            });
+
+            ConnectionREST.getInstance(context).addToRequestQueue(jsonObjectRequest);
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static public void getMessage_Raw(String nickname, String nicknameSend, final Context context, final FragmentChat fragment)
+    {
+        RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
+                .getRequestQueue();
+
+        try
+        {
+
+            String URL = URI + ENDPOINT_GET_CHAT_RAW;
+
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("nicknameUserReceive",nickname);
+            jsonBody.put("nicknameUserSend",nicknameSend);
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                    Request.Method.POST, URL, jsonBody, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try
+                    {
+                        if(response==null)
+                            return;
+
+                        if(response.getString("Status").equals("200"))
+                        {
+                            List<Message> listMessage = new ArrayList<>();
+                            for(int i = 0; response.has(Integer.toString(i));i++)
+                            {
+                                JSONObject jsonObject  = response.getJSONObject(Integer.toString(i));
+                                Message message  = new Message();
+
+                                message.setNickname(jsonObject.getString("nickname"));
+                                message.setEndpointImg(jsonObject.getString("endpointImg"));
+                                message.setMessage(jsonObject.getString("message"));
+                                message.setTimeSend(jsonObject.getString("time_stamp"));
+                                if(ApiManager.getUser().getNickname().equals(message.getNickname()))
+                                    message.setMe(true);
+                                else
+                                    message.setMe(false);
+
+                                listMessage.add(message);
+
+                            }
+
+                            fragment.Update_Chat(listMessage);
+                        }
+
+
+
+                        Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
+                    } catch(JSONException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context.getApplicationContext(),"El Servidor no esta disponible",Toast.LENGTH_LONG).show();
+                }
+            });
+
+            ConnectionREST.getInstance(context).addToRequestQueue(jsonObjectRequest);
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

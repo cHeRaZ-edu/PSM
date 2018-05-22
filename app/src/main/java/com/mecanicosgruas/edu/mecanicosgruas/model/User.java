@@ -20,6 +20,10 @@ public class User {
     private String EndPointImageBackground;
     private String EndPoint_last_GPS;
 
+    public User()
+    {
+
+    }
     public User(String nickname,String name, String apellido, String email, String password, String telefono) {
         this.nickname = nickname;
         this.name = name;

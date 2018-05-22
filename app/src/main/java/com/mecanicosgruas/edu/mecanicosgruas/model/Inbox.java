@@ -6,9 +6,22 @@ package com.mecanicosgruas.edu.mecanicosgruas.model;
 
 public class Inbox extends User{
     String last_message;
-    public Inbox(String nickname,String last_message) {
+    String timeSend;
+    public Inbox(String nickname,String endPoint) {
         super(nickname);
         this.last_message = last_message;
+    }
+    public Inbox()
+    {
+
+    }
+
+    public String getTimeSend() {
+        return timeSend;
+    }
+
+    public void setTimeSend(String timeSend) {
+        this.timeSend = timeSend;
     }
 
     public String getLast_message() {

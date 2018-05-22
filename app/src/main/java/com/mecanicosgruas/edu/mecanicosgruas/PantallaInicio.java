@@ -1,5 +1,6 @@
 package com.mecanicosgruas.edu.mecanicosgruas;
 
+
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
@@ -25,7 +26,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
 
 
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
@@ -50,6 +53,8 @@ public class PantallaInicio extends AppCompatActivity {
     private String fragmentTag="";
     public CircleImageView imagViewPerfil;
     public ImageView imgViewBackground;
+    private TextView txtViewNickname;
+    private  TextView txtViewEmail;
 
     DataReceivedListener listener;
 
@@ -57,8 +62,10 @@ public class PantallaInicio extends AppCompatActivity {
         this.listener = listener;
     }
 
+
     public interface DataReceivedListener {
         void onReceived(int requestCode, int resultCode, Intent data);
+        void onShutdown();
     }
 
     @Override
@@ -97,6 +104,8 @@ public class PantallaInicio extends AppCompatActivity {
         View header  = navigationView.getHeaderView(0);
         imagViewPerfil = (CircleImageView)header.findViewById(R.id.imgViewUserPanel);
         imgViewBackground = (ImageView)header.findViewById(R.id.imgViewBackgroundUserPanel);
+        txtViewNickname = (TextView) header.findViewById(R.id.textViewNickname);
+        txtViewEmail = (TextView)header.findViewById(R.id.textViewEmail);
 
 
 
@@ -116,7 +125,14 @@ public class PantallaInicio extends AppCompatActivity {
         if(fragmentTag.equals(""))
         changeFragment(new FragmentListService(),"inicio");
 
-        UpdateImage();
+        if(ApiManager.getUser()!=null)
+        {
+            txtViewNickname.setText(ApiManager.getUser().getNickname());
+            txtViewEmail.setText(ApiManager.getUser().getEmail());
+            UpdateImage();
+
+        }
+
 
 
 
@@ -210,6 +226,9 @@ public class PantallaInicio extends AppCompatActivity {
     }
     public void changeFragment(Fragment newFragment, String tag)
     {
+        if (listener != null) {
+            listener.onShutdown();
+        }
         FragmentManager fragmentManager = getFragmentManager();
 
         //Operaciones de agregar, remplazar y eliminar
@@ -235,6 +254,9 @@ public class PantallaInicio extends AppCompatActivity {
 
     public void changeFragment(Fragment newFragment, String tag,String titleActionBar)
     {
+        if (listener != null) {
+            listener.onShutdown();
+        }
         FragmentManager fragmentManager = getFragmentManager();
 
         //Operaciones de agregar, remplazar y eliminar
@@ -329,4 +351,17 @@ public class PantallaInicio extends AppCompatActivity {
         */
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        //ApiManager.setUser(null);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UpdateImage();
+    }
 }

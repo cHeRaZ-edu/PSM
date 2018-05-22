@@ -38,9 +38,9 @@
             <ImageView
                 android:id="@+id/imgViewBackgroundServiceDisplay"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:contentDescription="@string/desc_background_img_service"
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
                 app:srcCompat="@drawable/background_service" />
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgViewService"

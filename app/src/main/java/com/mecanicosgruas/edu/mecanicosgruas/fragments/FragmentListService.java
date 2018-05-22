@@ -11,8 +11,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
+import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdaptadorPantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
 
@@ -27,7 +29,7 @@ public class FragmentListService extends Fragment {
     private PantallaInicio activity;
     private List<Servicio>list_service = new ArrayList<Servicio>();
     private ListView list_view;
-    private List<Servicio> testLista = new ArrayList<>();
+    ListAdaptadorPantallaInicio adapter;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -35,7 +37,9 @@ public class FragmentListService extends Fragment {
 
         list_view = (ListView) view.findViewById(R.id.listview_services);
         activity = (PantallaInicio) getActivity();
-        iniflateListViewServicios();
+
+        if(ApiManager.isInternetConnection(getContext()))
+        ManagerREST.getService(activity,this);
 
         return view;
     }
@@ -48,15 +52,10 @@ public class FragmentListService extends Fragment {
 
     private void iniflateListViewServicios()
     {
+        if(adapter!=null)
+            return;
 
-        ListAdaptadorPantallaInicio adapter;
-        for(int i = 0;i<25;i++)
-        {
-            Servicio s = new Servicio("Example","Example","123456789",4.5f);
-            testLista.add(s);
-        }
-
-        adapter = new ListAdaptadorPantallaInicio(testLista);
+        adapter = new ListAdaptadorPantallaInicio(list_service,getContext());
 
         list_view.setAdapter(adapter);
     }
@@ -67,10 +66,21 @@ public class FragmentListService extends Fragment {
         list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
+                ApiManager.setService_select(list_service.get(position));
                 String data = ((TextView)view.findViewById(R.id.txtViewNameService)).getText().toString();
                 Toast.makeText(activity.getApplicationContext(),data + ": " + Integer.toString(position),Toast.LENGTH_LONG).show();
                 activity.changeFragment(new FragmentService(), "servicio","Servicio");
             }
         });
+    }
+
+
+    public void UpdateServices(List<Servicio>list_serviceParam)
+    {
+        list_service = list_serviceParam;
+        adapter = new ListAdaptadorPantallaInicio(list_service,getContext());
+
+        list_view.setAdapter(adapter);
     }
 }

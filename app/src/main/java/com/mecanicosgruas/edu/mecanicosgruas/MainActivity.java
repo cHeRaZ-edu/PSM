@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 
 // Inicio de sesion
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 //Validar desde el servidor, iniciar sesion
+                if(ApiManager.isInternetConnection(getApplicationContext()))
                 ManagerREST.LoginUser(name,password,MainActivity.this);
             }
         });

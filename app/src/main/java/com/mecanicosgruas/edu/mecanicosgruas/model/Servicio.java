@@ -3,11 +3,15 @@ package com.mecanicosgruas.edu.mecanicosgruas.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by LUNA on 28/03/2018.
  */
 
 public class Servicio implements Parcelable{
+    private String nickname;
     private String NombreServicio;
     private String descService;
     private String Ciudad;
@@ -17,9 +21,9 @@ public class Servicio implements Parcelable{
     private String Telefono;
     private float numStars;
 
-    private String endpointImagePort;
+    private String endpointImageUser;
     private String endpointImageBackground;
-
+    private List<HorarioClass> listHorario;
     public Servicio() {
     }
 
@@ -37,6 +41,16 @@ public class Servicio implements Parcelable{
         Colonia = colonia;
         Calle = calle;
         Num = num;
+
+    }
+
+    public Servicio(String nickname, String nombreServicio, String ciudad, String telefono, float numStars, String endpointImageBackground) {
+        this.nickname = nickname;
+        NombreServicio = nombreServicio;
+        Ciudad = ciudad;
+        Telefono = telefono;
+        this.numStars = numStars;
+        this.endpointImageBackground = endpointImageBackground;
     }
 
     public Servicio(Parcel parcel)
@@ -45,6 +59,32 @@ public class Servicio implements Parcelable{
         Ciudad = parcel.readString();
         Telefono = parcel.readString();
         numStars = parcel.readFloat();
+    }
+
+
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public List<HorarioClass> getListHorario() {
+        return listHorario;
+    }
+
+    public String getEndpointImageUser() {
+        return endpointImageUser;
+    }
+
+    public void setEndpointImageUser(String endpointImageUser) {
+        this.endpointImageUser = endpointImageUser;
+    }
+
+    public void setListHorario(List<HorarioClass> listHorario) {
+        this.listHorario = listHorario;
     }
 
     public String getNombreServicio() {
@@ -77,14 +117,6 @@ public class Servicio implements Parcelable{
 
     public void setNumStars(float numStars) {
         this.numStars = numStars;
-    }
-
-    public String getEndpointImagePort() {
-        return endpointImagePort;
-    }
-
-    public void setEndpointImagePort(String endpointImagePort) {
-        this.endpointImagePort = endpointImagePort;
     }
 
     public String getDescService() {

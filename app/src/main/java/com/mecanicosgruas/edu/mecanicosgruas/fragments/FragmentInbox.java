@@ -10,13 +10,16 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.MainActivity;
 import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
+import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdaptadorPantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdapterInbox;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Inbox;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
+import com.mecanicosgruas.edu.mecanicosgruas.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,7 @@ public class FragmentInbox extends android.support.v4.app.Fragment {
     private PantallaInicio activity;
     ListView listViewInbox;
     List<Inbox> inboxList = new ArrayList<>();
+    ListAdapterInbox adapter;
 
     @Nullable
     @Override
@@ -36,6 +40,8 @@ public class FragmentInbox extends android.support.v4.app.Fragment {
         View view = inflater.inflate(R.layout.fragment_inbox,container,false);
 
         listViewInbox = (ListView) view.findViewById(R.id.listView_inbox);
+        if(ApiManager.isInternetConnection(getContext()))
+        ManagerREST.get_users_message(ApiManager.getUser().getNickname(),getContext(),this);
 
         return view;
     }
@@ -44,19 +50,19 @@ public class FragmentInbox extends android.support.v4.app.Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         activity = (PantallaInicio) getActivity();
-        Inizialitate();
         EventListView();
     }
 
     void Inizialitate()
     {
-        ListAdapterInbox adapter;
+        /*
         for(int i = 0;i<25;i++)
         {
            inboxList.add(new Inbox("edu1234","Mi mensaje"));
         }
+        */
 
-        adapter = new ListAdapterInbox(inboxList);
+        adapter = new ListAdapterInbox(inboxList,getContext());
 
         listViewInbox.setAdapter(adapter);
     }
@@ -65,9 +71,21 @@ public class FragmentInbox extends android.support.v4.app.Fragment {
     {
         listViewInbox.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Inbox inbox = inboxList.get(position);
+                User u = new User();
+                u.setNickname(inbox.getNickname());
+                u.setEndPointImagePerfil(inbox.getEndPointImagePerfil());
+                ApiManager.setUser_select(u);
                 activity.changeFragment(new FragmentChat(),"chat","Chat");
             }
         });
+    }
+
+    public void uodateListUser(List<Inbox> listInboxParam)
+    {
+        inboxList = listInboxParam;
+
+        Inizialitate();
     }
 }

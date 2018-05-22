@@ -19,9 +19,11 @@ import java.util.List;
 
 public class ListAdapaterHorario extends BaseAdapter {
         List<HorarioClass> listHorario;
+        List<String> listHoras;
 
-    public ListAdapaterHorario(List<HorarioClass> listHorario) {
+    public ListAdapaterHorario(List<HorarioClass> listHorario, List<String> listHoras) {
         this.listHorario = listHorario;
+        this.listHoras = listHoras;
     }
 
     @Override
@@ -57,7 +59,10 @@ public class ListAdapaterHorario extends BaseAdapter {
         HorarioClass horario = listHorario.get(position);
         txtViewDiaSemana.setText(horario.getDiaSemana());
 
-           final int pos = position;
+        spinnerHoraIni.setSelection(listHoras.indexOf(horario.getHorarioInicial()));
+        spinnerHoraFinal.setSelection(listHoras.indexOf(horario.getHorarioFinal()));
+
+        final int pos = position;
 
         //if(!horario.getHorarioFinal().equals(spinnerHoraFinal.getSelectedItem().toString()))
         horario.setHorarioFinal(spinnerHoraFinal.getSelectedItem().toString());

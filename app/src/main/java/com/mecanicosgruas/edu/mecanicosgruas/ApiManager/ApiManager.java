@@ -1,10 +1,14 @@
 package com.mecanicosgruas.edu.mecanicosgruas.ApiManager;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.ParcelUuid;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 
@@ -19,9 +23,22 @@ import com.mecanicosgruas.edu.mecanicosgruas.model.User;
 public class ApiManager {
     private static User user;
     private static Servicio servicio;
+    private static  Servicio service_select;
+    private static User user_select;
     public static  final int STORAGE_IMAGE = 200;
     public static final int PHOTO_SHOT = 300;
     public static final String SPLIT_CODE = "<SPACE>";
+    private static ProgressDialog progressDialog;
+    public static final int COUNT_FAVORITO = 20;
+    public static int COUNT_STARS  = 5;
+
+    public static User getUser_select() {
+        return user_select;
+    }
+
+    public static void setUser_select(User user_select) {
+        ApiManager.user_select = user_select;
+    }
 
     public static User getUser() {
         return user;
@@ -39,6 +56,13 @@ public class ApiManager {
         ApiManager.servicio = servicio;
     }
 
+    public static Servicio getService_select() {
+        return service_select;
+    }
+
+    public static void setService_select(Servicio service_select) {
+        ApiManager.service_select = service_select;
+    }
 
     public static void StartAcivtyInicio(Context context)
     {
@@ -75,6 +99,38 @@ public class ApiManager {
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .show();
     }
+
+
+   public static void InizialiteProgresdialog(Context context)
+    {
+        progressDialog = null;
+        progressDialog  = new ProgressDialog(context.getApplicationContext());
+        progressDialog.setMessage("Fetching The File....");
+        progressDialog.show();
+    }
+
+   public static void finishProgresDialog()
+    {
+        if(progressDialog!=null)
+        progressDialog.dismiss();
+    }
+
+    public static boolean isInternetConnection(Context context)
+    {
+        boolean connected = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            //we are connected to a network
+            connected = true;
+        }
+        else
+            connected = false;
+
+        return connected;
+    }
+
+
 
 
 }
