@@ -691,7 +691,7 @@ public class ManagerREST {
         }
     }
 
-    static public void getMessage_Raw(String nickname, String nicknameSend, final Context context, final FragmentChat fragment)
+    static public void getMessage_Raw(String nickname, String nicknameSend,int sizeMessage, final Context context, final FragmentChat fragment)
     {
         RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
                 .getRequestQueue();
@@ -704,6 +704,7 @@ public class ManagerREST {
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("nicknameUserReceive",nickname);
             jsonBody.put("nicknameUserSend",nicknameSend);
+            jsonBody.put("sizeMessage",sizeMessage);
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     Request.Method.POST, URL, jsonBody, new Response.Listener<JSONObject>() {
@@ -711,6 +712,7 @@ public class ManagerREST {
                 public void onResponse(JSONObject response) {
                     try
                     {
+                        int size = 0;
                         if(response==null)
                             return;
 
@@ -735,12 +737,15 @@ public class ManagerREST {
 
                             }
 
+                            if(response.has("size_Message"))
+                            size  = response.getInt("size_Message");
+
                             fragment.Update_Chat(listMessage);
                         }
 
 
 
-                        Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
+                        Toast.makeText(context,response.getString("messageResponse") + " Size: " + size,Toast.LENGTH_LONG).show();
                     } catch(JSONException ex)
                     {
                         ex.printStackTrace();

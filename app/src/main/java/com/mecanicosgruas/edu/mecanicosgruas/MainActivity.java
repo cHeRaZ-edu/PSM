@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 
@@ -18,9 +19,10 @@ public class MainActivity extends AppCompatActivity {
     EditText editTxtPassword;
     Button btnLogin;
     Button btnRegister;
-    Button btnLoginFace;
+    //Button btnLoginFace;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        FacebookSdk.sdkInitialize(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -28,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         editTxtPassword = (EditText)findViewById(R.id.editTxtPassword);
         btnLogin = (Button)findViewById(R.id.btnLogin);
         btnRegister = (Button)findViewById(R.id.btnRegister);
-        btnLoginFace = (Button)findViewById(R.id.btnLoginFacebook);
+       // btnLoginFace = (Button)findViewById(R.id.btnLoginFacebook);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override

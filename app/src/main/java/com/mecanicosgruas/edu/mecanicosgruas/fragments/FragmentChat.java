@@ -132,6 +132,9 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
         if(adapter!=null)
         {
             adapter.notifyDataSetChanged();
+
+            listViewMessage.setSelection(listMessage.size() - 1);
+
             return;
         }
 
@@ -139,6 +142,8 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
         adapter = new ListAdapterChat(listMessage,getContext());
 
         listViewMessage.setAdapter(adapter);
+
+        listViewMessage.setSelection(listMessage.size() - 1);
     }
 
     @Override
@@ -188,7 +193,7 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
 
     public void Update_Chat(List<Message> listMessageParam)
     {
-        if(listMessage.size()!=listMessageParam.size())
+        if(listMessageParam.size()!=0)
         {
             for(int i = listMessage.size(); i<listMessageParam.size();i++)
             {
@@ -226,7 +231,7 @@ class ThreadChatSlow extends AsyncTask<FragmentChat,String,String>
                 @Override
                 public void run() {
 
-                    ManagerREST.getMessage_Raw(ApiManager.getUser().getNickname(),fragment.user.getNickname(),fragment.getContext(),fragment);
+                    ManagerREST.getMessage_Raw(ApiManager.getUser().getNickname(),fragment.user.getNickname(),fragment.listMessage.size(),fragment.getContext(),fragment);
 
                 }
             });
