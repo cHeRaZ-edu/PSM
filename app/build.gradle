@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.mecanicosgruas.edu.mecanicosgruas"
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -33,6 +33,6 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     implementation 'com.ankuryadav.lib:volleylib:1.0.3'
     implementation 'com.squareup.picasso:picasso:2.5.2'
-
+    compile 'com.github.skydoves:colorpickerview:1.0.8'
 
 }

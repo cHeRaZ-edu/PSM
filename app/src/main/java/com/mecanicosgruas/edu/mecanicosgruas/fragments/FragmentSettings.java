@@ -55,6 +55,7 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
     ImageButton btnImgPerfilUser;
     EditText editTxtTelefono;
     Spinner spinnerLenguaje;
+    Button btnColor;
     Bitmap imgPerfil;
     Bitmap imgPortada;
     boolean imageSelect;
@@ -90,6 +91,7 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
 
         imgViewImagePerfil  = (CircleImageView)myFragmentView.findViewById(R.id.imgViewUserEdit);
         imgViewImageBackground  =(ImageView)myFragmentView.findViewById(R.id.imgViewBackgroundEdit);
+        btnColor = (Button)myFragmentView.findViewById(R.id.idButtonColor);
 
 
         editTxtNombre.setText(name.toString());
@@ -102,6 +104,13 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
         BtnEventEdit();
 
         UpdatePerfil();
+
+        btnColor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myActivity.changeFragment(new FragmentChangeColor(),"color_fragment");
+            }
+        });
 
     }
     private void setEnabledView(boolean enabledView)

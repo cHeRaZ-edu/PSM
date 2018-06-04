@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.ReadPath.ReadPathUtil;
+import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentCreateService;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentInbox;
@@ -57,6 +58,7 @@ public class PantallaInicio extends AppCompatActivity {
     private  TextView txtViewEmail;
 
     DataReceivedListener listener;
+    public ManagerBD sqliteAdmin;
 
     public void setDataReceivedListener(DataReceivedListener listener) {
         this.listener = listener;
@@ -107,7 +109,7 @@ public class PantallaInicio extends AppCompatActivity {
         txtViewNickname = (TextView) header.findViewById(R.id.textViewNickname);
         txtViewEmail = (TextView)header.findViewById(R.id.textViewEmail);
 
-
+        sqliteAdmin = new ManagerBD(this);
 
 
         //setup hardcore toolbar
@@ -212,6 +214,10 @@ public class PantallaInicio extends AppCompatActivity {
                 case "Settings":
                 case "servicio":
                     changeFragment(new FragmentListService(),"inicio");
+                    getSupportActionBar().setTitle("Inicio");
+                    break;
+                case "color_fragment":
+                    changeFragment(new FragmentListService(),"Settings");
                     getSupportActionBar().setTitle("Inicio");
                     break;
                 case "inicio":

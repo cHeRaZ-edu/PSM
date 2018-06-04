@@ -94,6 +94,7 @@ public class ListAdapaterHorario extends BaseAdapter {
             }
         });
 
+
         return viewTemp;
     }
 }

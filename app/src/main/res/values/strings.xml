@@ -103,6 +103,18 @@
         <item>English</item>
     </string-array>
 
+    <string-array name="string_array_activitys">
+        <item>login</item>
+        <item>register</item>
+        <item>inicio</item>
+        <item>servicio</item>
+        <item>Inbox</item>
+        <item>chat</item>
+        <item>service_chat</item>
+        <item>Settings</item>
+        <item>CreateService</item>
+    </string-array>
+
     <string name="imagepicker_multiselect_done">Done</string>
     <string name="imagepicker_multiselect_not_enough_singular">You have to select 1 more image</string>
     <string name="imagepicker_multiselect_not_enough_plural">You have to select %d more images</string>
