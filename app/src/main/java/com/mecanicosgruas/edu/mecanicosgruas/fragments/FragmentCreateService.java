@@ -15,7 +15,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,8 +26,10 @@ import com.mecanicosgruas.edu.mecanicosgruas.ImageUtil.ImageUtil;
 import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
 import com.mecanicosgruas.edu.mecanicosgruas.ReadPath.ReadPathUtil;
+import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdapaterHorario;
+import com.mecanicosgruas.edu.mecanicosgruas.model.ColorAcivity;
 import com.mecanicosgruas.edu.mecanicosgruas.model.HorarioClass;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
 import com.squareup.picasso.Picasso;
@@ -84,6 +88,15 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
         editTextNumCreateService = (EditText)myview.findViewById(R.id.editTxtNumCreateService);
 
         imgViewServicePort  = (ImageView)myview.findViewById(R.id.imgBackgroundServiceCreateService);
+
+        ColorAcivity colorAcivity =  new ManagerBD(getContext()).GetColorActivity(ApiManager.SERVICE_EDIT_FRGAMENT);
+        if(colorAcivity!=null)
+        {
+            RelativeLayout layout = myview.findViewById(R.id.id_fragment);
+            int color  = colorAcivity.parseColor();
+            layout.setBackgroundColor(color);
+        }
+
         return myview;
     }
 

@@ -7,15 +7,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
+import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdaptadorPantallaInicio;
+import com.mecanicosgruas.edu.mecanicosgruas.model.ColorAcivity;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
 
 import java.util.ArrayList;
@@ -40,6 +44,14 @@ public class FragmentListService extends Fragment {
 
         if(ApiManager.isInternetConnection(getContext()))
         ManagerREST.getService(activity,this);
+
+        ColorAcivity colorAcivity =  new ManagerBD(activity).GetColorActivity(ApiManager.INICIO_FRAGMENT);
+        if(colorAcivity!=null)
+        {
+            LinearLayout layout = view.findViewById(R.id.id_fragment);
+            int color  = colorAcivity.parseColor();
+            layout.setBackgroundColor(color);
+        }
 
         return view;
     }

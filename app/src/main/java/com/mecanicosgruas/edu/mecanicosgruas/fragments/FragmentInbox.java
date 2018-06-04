@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -14,9 +15,11 @@ import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.MainActivity;
 import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
+import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdaptadorPantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdapterInbox;
+import com.mecanicosgruas.edu.mecanicosgruas.model.ColorAcivity;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Inbox;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
 import com.mecanicosgruas.edu.mecanicosgruas.model.User;
@@ -42,6 +45,14 @@ public class FragmentInbox extends android.support.v4.app.Fragment {
         listViewInbox = (ListView) view.findViewById(R.id.listView_inbox);
         if(ApiManager.isInternetConnection(getContext()))
         ManagerREST.get_users_message(ApiManager.getUser().getNickname(),getContext(),this);
+
+        ColorAcivity colorAcivity =  new ManagerBD(getContext()).GetColorActivity(ApiManager.INBOX_FRAGMENT);
+        if(colorAcivity!=null)
+        {
+            LinearLayout layout = view.findViewById(R.id.id_fragment);
+            int color  = colorAcivity.parseColor();
+            layout.setBackgroundColor(color);
+        }
 
         return view;
     }

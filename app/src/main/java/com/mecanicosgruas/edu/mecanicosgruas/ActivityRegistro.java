@@ -1,6 +1,7 @@
 package com.mecanicosgruas.edu.mecanicosgruas;
 
 
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,10 +10,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
+import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
+import com.mecanicosgruas.edu.mecanicosgruas.model.ColorAcivity;
 import com.mecanicosgruas.edu.mecanicosgruas.model.User;
 
 import java.text.Normalizer;
@@ -120,7 +124,13 @@ public class ActivityRegistro extends AppCompatActivity {
             return false;
         }
 
-
+        ColorAcivity colorAcivity =  new ManagerBD(this).GetColorActivity(ApiManager.REGISTER_ACTIIVT);
+        if(colorAcivity!=null)
+        {
+            RelativeLayout layout = findViewById(R.id.id_activity);
+            int color  = colorAcivity.parseColor();
+            layout.setBackgroundColor(color);
+        }
         //Validar nombre y correo electronico en el servidor
 
         return true;

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
@@ -22,8 +23,10 @@ import com.mecanicosgruas.edu.mecanicosgruas.ImageUtil.ImageUtil;
 import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
 import com.mecanicosgruas.edu.mecanicosgruas.ReadPath.ReadPathUtil;
+import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdapterChat;
+import com.mecanicosgruas.edu.mecanicosgruas.model.ColorAcivity;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Message;
 import com.mecanicosgruas.edu.mecanicosgruas.model.User;
 import com.squareup.picasso.Picasso;
@@ -90,6 +93,15 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
 
 
         EventButton();
+
+
+        ColorAcivity colorAcivity =  new ManagerBD(getContext()).GetColorActivity(ApiManager.CHAT_FRAGMENT);
+        if(colorAcivity!=null)
+        {
+            RelativeLayout layout = view.findViewById(R.id.id_fragment);
+            int color  = colorAcivity.parseColor();
+            layout.setBackgroundColor(color);
+        }
 
 
         return view;

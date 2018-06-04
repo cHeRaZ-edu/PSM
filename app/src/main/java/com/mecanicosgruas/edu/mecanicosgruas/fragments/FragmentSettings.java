@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +27,9 @@ import com.mecanicosgruas.edu.mecanicosgruas.ImageUtil.ImageUtil;
 import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
 import com.mecanicosgruas.edu.mecanicosgruas.ReadPath.ReadPathUtil;
+import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
+import com.mecanicosgruas.edu.mecanicosgruas.model.ColorAcivity;
 import com.mecanicosgruas.edu.mecanicosgruas.model.User;
 
 import java.text.Normalizer;
@@ -67,6 +71,15 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
         myFragmentView = inflater.inflate(R.layout.fragment_settings,container,false);
         myActivity = (PantallaInicio) getActivity();
         myActivity.setDataReceivedListener(this);
+
+        ColorAcivity colorAcivity =  new ManagerBD(getContext()).GetColorActivity(ApiManager.SETTINGS_FRGAMENT);
+        if(colorAcivity!=null)
+        {
+            RelativeLayout layout = myFragmentView.findViewById(R.id.id_fragment);
+            int color  = colorAcivity.parseColor();
+            layout.setBackgroundColor(color);
+        }
+
         return myFragmentView;
     }
 

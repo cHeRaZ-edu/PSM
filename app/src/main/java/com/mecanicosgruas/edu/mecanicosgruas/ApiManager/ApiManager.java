@@ -32,16 +32,16 @@ public class ApiManager {
     public static final int COUNT_FAVORITO = 20;
     public static int COUNT_STARS  = 5;
 
-    static final String LOGIN_ACTIIVTY = "login";
-    static final String REGISTER_ACTIIVT = "register";
-    static final String INICIO_FRAGMENT = "inicio";
-    static final String SERVICE_DISPLAY_FRAGMENT = "servicio";
-    static final String SERVICE_EDIT_FRGAMENT = "CreateService";
-    static final String SETTINGS_FRGAMENT = "Settings";
-    static final String INBOX_FRAGMENT = "Inbox";
-    static final String CHAT_FRAGMENT = "chat";
-    static final String CHAT_SERVICE = "service_chat";
-    static final String CHANGE_COLOR_FRGAMENT  = "color_fragment";
+    public static final String LOGIN_ACTIIVTY = "login";
+    public static final String REGISTER_ACTIIVT = "register";
+    public static final String INICIO_FRAGMENT = "inicio";
+    public static final String SERVICE_DISPLAY_FRAGMENT = "servicio";
+    public static final String SERVICE_EDIT_FRGAMENT = "CreateService";
+    public static final String SETTINGS_FRGAMENT = "Settings";
+    public static final String INBOX_FRAGMENT = "Inbox";
+    public static final String CHAT_FRAGMENT = "chat";
+    public static final String CHAT_SERVICE = "service_chat";
+    public static final String CHANGE_COLOR_FRGAMENT  = "color_fragment";
 
     public static User getUser_select() {
         return user_select;

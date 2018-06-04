@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -20,9 +21,11 @@ import android.widget.Toast;
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
+import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdapterChat;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdapterHorarioDisplay;
+import com.mecanicosgruas.edu.mecanicosgruas.model.ColorAcivity;
 import com.mecanicosgruas.edu.mecanicosgruas.model.HorarioClass;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Message;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
@@ -96,6 +99,13 @@ public class FragmentService extends Fragment {
         if(ApiManager.isInternetConnection(getContext()))
         ManagerREST.FindService(getContext(),null,this,2);
 
+        ColorAcivity colorAcivity =  new ManagerBD(getContext()).GetColorActivity(ApiManager.SERVICE_DISPLAY_FRAGMENT);
+        if(colorAcivity!=null)
+        {
+            LinearLayout layout = view.findViewById(R.id.id_fragment);
+            int color  = colorAcivity.parseColor();
+            layout.setBackgroundColor(color);
+        }
 
         return view;
     }

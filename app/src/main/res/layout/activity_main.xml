@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     android:gravity="center|top"
     android:orientation="vertical"
-    tools:context="com.mecanicosgruas.edu.mecanicosgruas.MainActivity">
+    tools:context="com.mecanicosgruas.edu.mecanicosgruas.MainActivity"
+    android:id="@+id/id_activity">
 
 
     <EditText

@@ -51,7 +51,7 @@ String colorS;
             public void onColorSelected(int color) {
                 LinearLayout linearLayout = fragment.findViewById(R.id.idLinearlayout);
                 linearLayout.setBackgroundColor(color);
-                colorS = Integer.toBinaryString(color);
+                colorS = "#"+Integer.toHexString(color);
             }
         });
 
@@ -61,7 +61,8 @@ String colorS;
 
                 String nameActivity = spinner.getItemAtPosition(spinner.getSelectedItemPosition()).toString();
                 //insert bd sqlite
-                activity.sqliteAdmin.ChangeColor(nameActivity,colorS);
+                new ManagerBD(activity).ChangeColor(nameActivity,colorS);//ChangeColor(nameActivity,colorS);
+
                 activity.changeFragment(new FragmentSettings(),"Settings");
             }
         });

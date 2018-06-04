@@ -58,7 +58,6 @@ public class PantallaInicio extends AppCompatActivity {
     private  TextView txtViewEmail;
 
     DataReceivedListener listener;
-    public ManagerBD sqliteAdmin;
 
     public void setDataReceivedListener(DataReceivedListener listener) {
         this.listener = listener;
@@ -109,7 +108,6 @@ public class PantallaInicio extends AppCompatActivity {
         txtViewNickname = (TextView) header.findViewById(R.id.textViewNickname);
         txtViewEmail = (TextView)header.findViewById(R.id.textViewEmail);
 
-        sqliteAdmin = new ManagerBD(this);
 
 
         //setup hardcore toolbar

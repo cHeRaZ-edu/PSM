@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        tools:context="com.mecanicosgruas.edu.mecanicosgruas.servicio_display">
+        tools:context="com.mecanicosgruas.edu.mecanicosgruas.servicio_display"
+        android:id="@+id/id_fragment">
 
         <RatingBar
             android:id="@+id/ratingBarServiceDisplay"

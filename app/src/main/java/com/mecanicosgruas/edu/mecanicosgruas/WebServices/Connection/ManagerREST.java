@@ -46,7 +46,7 @@ import java.util.List;
 
 public class ManagerREST {
    // private static final String URI = "http://movilesapp.servehttp.com";
-    private static final String URI = "http://192.168.1.70";
+    private static final String URI = "http://192.168.180.1";
     private static final String ENDPOINT_REGISTER = "/register/user";
     private static final String ENDPOINT_LOGIN = "/login";
     private static final String ENDPOINT_UPDATE_USER  = "/update/user";
