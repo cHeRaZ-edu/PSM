@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,6 +25,7 @@ import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
 import com.mecanicosgruas.edu.mecanicosgruas.ReadPath.ReadPathUtil;
 import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
+import com.mecanicosgruas.edu.mecanicosgruas.StorageUtils.StorageUtils;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdapterChat;
 import com.mecanicosgruas.edu.mecanicosgruas.model.ColorAcivity;
@@ -58,13 +60,15 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
     String encodeBase64Img;
     ListAdapterChat adapter;
     ThreadChatSlow callChatThread;
-
+    View fragmentView;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat,container,false);
+        fragmentView = view;
         activty = (PantallaInicio)getActivity();
         activty.setDataReceivedListener(this);
+        activty.fragmentSharedPrefernces = activty.getString(R.string.ChatKeyColor);
         user = ApiManager.getUser_select();
         encodeBase64Img = "";
         listViewMessage = (ListView)view.findViewById(R.id.listView_chat);
@@ -95,11 +99,11 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
         EventButton();
 
 
-        ColorAcivity colorAcivity =  new ManagerBD(getContext()).GetColorActivity(ApiManager.CHAT_FRAGMENT);
-        if(colorAcivity!=null)
+        StorageUtils.InizilateSharedPrefernces(activty);
+        int color = StorageUtils.getColor(getString(R.string.ChatKeyColor));
+        if(color!=0)
         {
             RelativeLayout layout = view.findViewById(R.id.id_fragment);
-            int color  = colorAcivity.parseColor();
             layout.setBackgroundColor(color);
         }
 
@@ -163,7 +167,7 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
         if (resultCode == RESULT_OK && ApiManager.PHOTO_SHOT == requestCode)
         {
             // Guardamos el thumbnail de la imagen en un archivo con el siguiente nombre
-            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            Bitmap bitmap =  ApiManager.rezieBitmapApplicaition((Bitmap) data.getExtras().get("data"));
 
             if(bitmap!=null)
                 encodeBase64Img = ImageUtil.encodeBase64(bitmap);
@@ -177,7 +181,7 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
             String pathImage = ReadPathUtil.getRealPathFromURI_API19(activty,uri);
 
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-            Bitmap bitmap = BitmapFactory.decodeFile(pathImage,bmOptions);
+            Bitmap bitmap = ApiManager.rezieBitmapApplicaition(BitmapFactory.decodeFile(pathImage,bmOptions));
             if(bitmap!=null)
                 encodeBase64Img = ImageUtil.encodeBase64(bitmap);
 
@@ -187,6 +191,15 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
 
 
 
+        }
+
+        if(resultCode == RESULT_OK && requestCode == ApiManager.CODE_RESULT_CHANGE_COLOR) {
+            StorageUtils.InizilateSharedPrefernces(activty);
+            int color = StorageUtils.getColor(getString(R.string.ChatKeyColor));
+            if(color!=0) {
+                RelativeLayout layout = fragmentView.findViewById(R.id.id_fragment);
+                layout.setBackgroundColor(color);
+            }
         }
 
 

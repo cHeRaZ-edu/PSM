@@ -2,9 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.mecanicosgruas.edu.mecanicosgruas">
+    <!-- Valida que el dispositivo cuente con OPEN GL ES v2 -->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true"/>
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- Obtener ubicacion del usuario -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,6 +21,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:node="replace">
+        <meta-data
+            android:name="io.fabric.sdk.android.services.common.ApiKey"
+            android:value="@string/Twitter_Key" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key"/>
+
+        <service android:name=".ServiceUtils.ServiceUtils"
+            android:exported="false"/>
+
         <activity
             android:name=".MainActivity"
             android:label="@string/title_app"
@@ -26,9 +44,12 @@
         <activity
             android:name=".PantallaInicio"
             android:label="@string/screen_title"
-            android:theme="@style/InicioTheme"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/InicioTheme" />
         <activity android:name=".ActivityRegistro" />
+        <activity android:name=".ChangeColorAcivity"
+            android:label="Cambiar Color"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

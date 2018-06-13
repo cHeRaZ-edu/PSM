@@ -3,6 +3,7 @@ package com.mecanicosgruas.edu.mecanicosgruas;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -34,6 +35,8 @@ import android.widget.Toast;
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.ReadPath.ReadPathUtil;
 import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
+import com.mecanicosgruas.edu.mecanicosgruas.ServiceUtils.ServiceUtils;
+import com.mecanicosgruas.edu.mecanicosgruas.StorageUtils.StorageUtils;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentCreateService;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentInbox;
@@ -56,6 +59,8 @@ public class PantallaInicio extends AppCompatActivity {
     public ImageView imgViewBackground;
     private TextView txtViewNickname;
     private  TextView txtViewEmail;
+    public String fragmentSharedPrefernces;
+    Context context;
 
     DataReceivedListener listener;
 
@@ -88,6 +93,12 @@ public class PantallaInicio extends AppCompatActivity {
             case R.id.app_bar_search:
                 Toast.makeText(getApplicationContext(),"Call search",Toast.LENGTH_LONG).show();
                 return true;
+            case R.id.extra_changeColor:
+                //Toast.makeText(this,"Cambiar color",Toast.LENGTH_LONG).show();
+                ApiManager.AcivitySelectColor = fragmentSharedPrefernces;
+                Intent intent = new Intent(PantallaInicio.this,ChangeColorAcivity.class);
+                startActivityForResult(intent,ApiManager.CODE_RESULT_CHANGE_COLOR);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -98,6 +109,7 @@ public class PantallaInicio extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pantalla_inicio);
+        context = getApplicationContext();
         //get view
         toolbar = (Toolbar) findViewById(R.id.toolbarIniId);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_Inicio);
@@ -130,7 +142,10 @@ public class PantallaInicio extends AppCompatActivity {
             txtViewNickname.setText(ApiManager.getUser().getNickname());
             txtViewEmail.setText(ApiManager.getUser().getEmail());
             UpdateImage();
+            //... active background service
 
+            Intent intent = new Intent(this, ServiceUtils.class);
+            startService(intent);
         }
 
 
@@ -298,6 +313,9 @@ public class PantallaInicio extends AppCompatActivity {
                 .setPositiveButton("Salir", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
+                        ApiManager.LogOutTwitter();
+                        new ManagerBD(context).TruncTableUser();
+                        new ManagerBD(context).TruncTableService();
                         finish();
                     }
                 })

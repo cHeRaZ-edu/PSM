@@ -1,11 +1,14 @@
 package com.mecanicosgruas.edu.mecanicosgruas;
 
 
+import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +18,7 @@ import android.widget.Toast;
 
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
+import com.mecanicosgruas.edu.mecanicosgruas.StorageUtils.StorageUtils;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.model.ColorAcivity;
 import com.mecanicosgruas.edu.mecanicosgruas.model.User;
@@ -31,6 +35,8 @@ public class ActivityRegistro extends AppCompatActivity {
     EditText password;
     EditText telefono;
     ActionBar actionBar;
+    boolean REGISTER = false;
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -39,6 +45,11 @@ public class ActivityRegistro extends AppCompatActivity {
         {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.extra_changeColor:
+                ApiManager.AcivitySelectColor = getString(R.string.RegisterKeyColor);
+                Intent intent = new Intent(ActivityRegistro.this,ChangeColorAcivity.class);
+                startActivityForResult(intent,ApiManager.CODE_RESULT_CHANGE_COLOR);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -89,9 +100,18 @@ public class ActivityRegistro extends AppCompatActivity {
                     //Registrar desde el servidor
                     if(ApiManager.isInternetConnection(getApplicationContext()))
                     ManagerREST.RegisterUser(usuario,ActivityRegistro.this);
+                    REGISTER = true;
                 }
             }
         });
+
+        StorageUtils.InizilateSharedPrefernces(this);
+        int color = StorageUtils.getColor(getString(R.string.RegisterKeyColor));
+        if(color!=0)
+        {
+            RelativeLayout layout = findViewById(R.id.id_activity);
+            layout.setBackgroundColor(color);
+        }
 
     }
 
@@ -124,15 +144,34 @@ public class ActivityRegistro extends AppCompatActivity {
             return false;
         }
 
-        ColorAcivity colorAcivity =  new ManagerBD(this).GetColorActivity(ApiManager.REGISTER_ACTIIVT);
-        if(colorAcivity!=null)
-        {
-            RelativeLayout layout = findViewById(R.id.id_activity);
-            int color  = colorAcivity.parseColor();
-            layout.setBackgroundColor(color);
-        }
-        //Validar nombre y correo electronico en el servidor
-
         return true;
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //inflate menu
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.options_extra,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK && requestCode == ApiManager.CODE_RESULT_CHANGE_COLOR) {
+            StorageUtils.InizilateSharedPrefernces(this);
+            int color = StorageUtils.getColor(getString(R.string.RegisterKeyColor));
+            if(color!=0) {
+                RelativeLayout layout = findViewById(R.id.id_activity);
+                layout.setBackgroundColor(color);
+            }
+        }
+
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if(REGISTER)
+            finish();
     }
 }

@@ -22,6 +22,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.JsonObject;
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
+import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentChat;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentCreateService;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentInbox;
@@ -46,7 +47,7 @@ import java.util.List;
 
 public class ManagerREST {
    // private static final String URI = "http://movilesapp.servehttp.com";
-    private static final String URI = "http://192.168.180.1";
+    private static final String URI = "http://192.168.1.64";
     private static final String ENDPOINT_REGISTER = "/register/user";
     private static final String ENDPOINT_LOGIN = "/login";
     private static final String ENDPOINT_UPDATE_USER  = "/update/user";
@@ -57,12 +58,12 @@ public class ManagerREST {
     private static final String ENDPOINT_SEND_MESSAGE = "/message/user";
     private static final String ENDPOINT_GET_USER_MESSAGE = "/message/list_user";
     private static final String ENDPOINT_GET_CHAT_RAW = "/message/chat/user";
-
+    private static final String ENDPOINT_LOGIN_WITH_TWITTER = "/login/twitter";
     public static String getURI() {
         return URI;
     }
 
-    static public void RegisterUser(User user, final Context context)
+    static public void RegisterUser(final User user, final Context context)
     {
 
         try
@@ -92,10 +93,14 @@ public class ManagerREST {
 
                                 if(response.getString("Status")!=null)
                                 {
-                                    Toast.makeText(context.getApplicationContext(),response.getString("messageResponse"),Toast.LENGTH_LONG).show();
+                                    //Register??
+                                    if(response.getString("register").equals("1")) {
+                                        LoginUser(user.getNickname(),user.getPassword(),context);
+                                    }
+
                                 }
 
-                                Log.i("Response: ", response.toString());
+                                Log.i("Message Register",response.getString("messageResponse"));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -146,8 +151,8 @@ public class ManagerREST {
                                 if(response==null)
                                     return;
 
-                                if(response.getString("Status").equals("200"))
-                                {
+                                if(response.getString("Status").equals("200") ||
+                                    response.getString("Status").equals("202")) {
                                     User user = new User
                                             (
                                                     response.getString("nickname"),
@@ -160,11 +165,37 @@ public class ManagerREST {
                                                     response.getString("pathFileGPS")
                                             );
                                     ApiManager.setUser(user);
+                                    new ManagerBD(context).TruncTableUser();
+                                    new ManagerBD(context).InsertTableUser(user);
 
-                                    ApiManager.StartAcivtyInicio(context);
+                                    if(response.getString("Status").equals("200")) {
+                                        Servicio s = new Servicio();
+                                        s.setNickname(response.getString("nickname"));
+                                        s.setNombreServicio(response.getString("nameService"));
+                                        s.setDescService(response.getString("descService"));
+                                        s.setEndpointImageBackground(response.getString("endpointImg"));
+                                        s.setCiudad(response.getString("ciudad"));
+                                        s.setColonia(response.getString("colonia"));
+                                        s.setCalle(response.getString("calle"));
+                                        s.setNum(response.getString("num"));
+                                        s.setTelefono(response.getString("telefono"));
+                                        s.setEndpointImageUser(response.getString("endPointImgUser"));
+                                        s.setNumStars(Float.parseFloat(response.getString("countFavoritios")));
+
+                                        List<HorarioClass> listHorario = ApiManager.getFormatListHorario(response, 1);
+                                        ApiManager.setServicio(s);
+                                        new ManagerBD(context).TruncTableService();
+                                        new ManagerBD(context).InsertTableService(s);
+                                    }
+                                    else {
+                                        ApiManager.setServicio(null);
+                                        new ManagerBD(context).TruncTableService();
+                                    }
+                                     ApiManager.StartAcivtyInicio(context);
+
                                 }
 
-                                    Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
+                                Log.i("Login User",response.getString("messageResponse"));
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -189,7 +220,6 @@ public class ManagerREST {
             ex.printStackTrace();
         }
     }
-
 
     static public void UpdateUser(User user,String codeBase64ImgPerfil,String codeBase64ImgBackground, final Context context,final PantallaInicio activity)
     {
@@ -362,67 +392,7 @@ public class ManagerREST {
                             s.setEndpointImageUser(response.getString("endPointImgUser"));
                             s.setNumStars(Float.parseFloat(response.getString("countFavoritios")));
 
-                            List<HorarioClass> listHorario = new ArrayList<>();
-
-                            if(response.has("lun"))
-                                listHorario.add(new HorarioClass("Lunes",response.getString("lun")));
-                            else
-                            {
-                                if(Mode!=2)
-                                listHorario.add(new HorarioClass("Lunes"));
-                            }
-
-
-                            if(response.has("mar"))
-                                listHorario.add(new HorarioClass("Martes",response.getString("mar")));
-                                else
-                                {
-                                    if(Mode!=2)
-                                    listHorario.add(new HorarioClass("Martes"));
-                                }
-
-                            if(response.has("mie"))
-                                listHorario.add(new HorarioClass("Miercoles",response.getString("mie")));
-                                else
-                            {
-                                if(Mode!=2)
-                                listHorario.add(new HorarioClass("Miercoles"));
-                            }
-
-
-                            if(response.has("jue"))
-                                listHorario.add(new HorarioClass("Jueves",response.getString("jue")));
-                                else
-                            {
-                                if(Mode!=2)
-                                listHorario.add(new HorarioClass("Jueves"));
-                            }
-
-
-                            if(response.has("vie"))
-                                listHorario.add(new HorarioClass("Viernes",response.getString("vie")));
-                                else
-                            {
-                                if(Mode!=2)
-                                listHorario.add(new HorarioClass("Viernes"));
-                            }
-
-                            if(response.has("sab"))
-                                listHorario.add(new HorarioClass("Sabado",response.getString("sab")));
-                                else
-                            {
-                                if(Mode!=2)
-                                listHorario.add(new HorarioClass("Sabado"));
-                            }
-
-
-                            if(response.has("dom"))
-                                listHorario.add(new HorarioClass("Domingo",response.getString("dom")));
-                                else
-                            {
-                                if(Mode!=2)
-                                listHorario.add(new HorarioClass("Domingo"));
-                            }
+                            List<HorarioClass> listHorario = ApiManager.getFormatListHorario(response,Mode);
 
                             s.setListHorario(listHorario);
 
@@ -708,7 +678,7 @@ public class ManagerREST {
             jsonBody.put("sizeMessage",sizeMessage);
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                    Request.Method.POST, URL, jsonBody, new Response.Listener<JSONObject>() {
+                Request.Method.POST, URL, jsonBody, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     try
@@ -766,4 +736,52 @@ public class ManagerREST {
         }
     }
 
+    static public void LoginWithTwitter(String nickname, final Context context) {
+        RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
+                .getRequestQueue();
+        try{
+            String URL = URI + ENDPOINT_LOGIN_WITH_TWITTER;
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("nickname",nickname);
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest (
+                    Request.Method.POST, URL, jsonBody, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        if(response==null)
+                            return;
+                        if(response.getString("Status").equals("200")) {
+                            User user = new User
+                                    (
+                                            response.getString("nickname"),
+                                            response.getString("name"),
+                                            response.getString("last_name"),
+                                            response.getString("email"),
+                                            response.getString("phone"),
+                                            response.getString("user_pathImg"),
+                                            response.getString("user_pathPortImg"),
+                                            response.getString("pathFileGPS")
+                                    );
+                            ApiManager.setUser(user);
+                            ApiManager.StartAcivtyInicio(context);
+                        }
+
+                        Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
+                    } catch(JSONException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context.getApplicationContext(),"El Servidor no esta disponible",Toast.LENGTH_LONG).show();
+                }
+            }
+            );
+            ConnectionREST.getInstance(context).addToRequestQueue(jsonObjectRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }

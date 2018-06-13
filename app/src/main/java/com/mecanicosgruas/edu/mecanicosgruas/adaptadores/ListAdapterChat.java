@@ -107,6 +107,8 @@ public class ListAdapterChat extends BaseAdapter {
                     .placeholder(R.drawable.user)
                     .fit()
                     .into(imgView);
+            imgView.getLayoutParams().width = 500;
+            imgView.getLayoutParams().height = 500;
         }
         else
         {

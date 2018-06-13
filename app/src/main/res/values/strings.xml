@@ -122,4 +122,15 @@
     <string name="imagepicker_multiselect_enough_plural">You have selected %d images</string>
     <string name="imagepicker_multiselect_overselect">You cannot select more than %d images</string>
 
+
+
+    <string name="SharedPreferencesFile">misPref</string>
+    <string name="LoginKeyColor">Login</string>
+    <string name="RegisterKeyColor">Register</string>
+    <string name="InicioKeyColor">Inicio</string>
+    <string name="CreateServiceKeyColor">CreateService</string>
+    <string name="ServiceDisplayKeyColor">ServiceDisplay</string>
+    <string name="InboxKeyColor">Inbox</string>
+    <string name="ChatKeyColor">Chat</string>
+    <string name="SettingsKeyColor">Settings</string>
 </resources>

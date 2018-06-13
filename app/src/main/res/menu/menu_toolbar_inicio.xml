@@ -9,4 +9,7 @@
         android:title="Search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/extra_changeColor"
+        android:title="Change Color" />
 </menu>

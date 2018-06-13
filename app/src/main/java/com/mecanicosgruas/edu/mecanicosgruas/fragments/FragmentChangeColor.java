@@ -55,17 +55,7 @@ String colorS;
             }
         });
 
-        btnChangeColor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                String nameActivity = spinner.getItemAtPosition(spinner.getSelectedItemPosition()).toString();
-                //insert bd sqlite
-                new ManagerBD(activity).ChangeColor(nameActivity,colorS);//ChangeColor(nameActivity,colorS);
-
-                activity.changeFragment(new FragmentSettings(),"Settings");
-            }
-        });
 
         return view;
     }

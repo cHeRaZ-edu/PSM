@@ -5,14 +5,16 @@ package com.mecanicosgruas.edu.mecanicosgruas.SQLITE;
  */
 
 public class ServiceTable {
-    static final String TABLE_NAME = "service";
+    static final String TABLE_NAME = "table_service";
     static final String COLUMN_ID = "id";
-    static final String COLUMN_NAME = "service";
+    static final String COLUMN_NAME = "name_service";
     static final String COLUMN_DESC_SERVICE = "desc_service";
+    static final String COLUMN_ENDPOINT_IMG = "endpointImg";
     static final String COLUMN_CIUDAD = "ciudad";
     static final String COLUMN_COLONIA = "colonia";
     static final String COLUMN_CALLE = "calle";
     static final String COLUMN_NUM = "num";
+
 
 
     static final String CREATE_TABLE =
@@ -20,10 +22,11 @@ public class ServiceTable {
             +COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"
             +COLUMN_NAME + " TEXT,"
             +COLUMN_DESC_SERVICE + " TEXT,"
+            +COLUMN_ENDPOINT_IMG + " TEXT,"
             +COLUMN_CIUDAD + " TEXT,"
             +COLUMN_COLONIA + " TEXT,"
             +COLUMN_CALLE + " TEXT,"
-            +COLUMN_NUM+ " TEXT"
+            +COLUMN_NUM + " TEXT"
             +")";
 
 

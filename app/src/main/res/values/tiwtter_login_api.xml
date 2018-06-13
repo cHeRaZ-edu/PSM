@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Remove key and secret when upgrade github-->
+    <string name="Twitter_Key">KEY_CODE</string>
+    <string name="Twitter_Secret">SERCET_CODE</string>
+</resources>

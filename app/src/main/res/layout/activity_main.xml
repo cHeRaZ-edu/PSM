@@ -61,19 +61,18 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:text="@string/btnTxtRegister"
-        app:layout_constraintBottom_toTopOf="@+id/btnLoginFacebook"
+        app:layout_constraintBottom_toTopOf="@+id/twitterLoginButton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/btnLoginFacebook"
-        style="@style/btnFacebook"
-        android:layout_width="300dp"
+    <com.twitter.sdk.android.core.identity.TwitterLoginButton
+        android:id="@+id/twitterLoginButton"
+        android:layout_width="291dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:text="@string/btnTxtLoginFace"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

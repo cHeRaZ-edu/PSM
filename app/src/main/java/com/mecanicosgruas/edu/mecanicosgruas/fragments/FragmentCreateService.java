@@ -3,7 +3,10 @@ package com.mecanicosgruas.edu.mecanicosgruas.fragments;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,12 +24,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.ImageUtil.ImageUtil;
 import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
 import com.mecanicosgruas.edu.mecanicosgruas.ReadPath.ReadPathUtil;
 import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
+import com.mecanicosgruas.edu.mecanicosgruas.StorageUtils.StorageUtils;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdapaterHorario;
 import com.mecanicosgruas.edu.mecanicosgruas.model.ColorAcivity;
@@ -37,6 +42,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,15 +73,17 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
     Bitmap imgServicePort;
     ImageView imgViewServicePort;
     String encodeBase64Img;
-
+    Button btnLocalizar;
+    LatLng latLng;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myview = inflater.inflate(R.layout.fragment_create_service,container,false);
-
+        myActivity = (PantallaInicio) getActivity();
+        myActivity.setDataReceivedListener(this);
+        myActivity.fragmentSharedPrefernces = myActivity.getString(R.string.CreateServiceKeyColor);
         if(ApiManager.isInternetConnection(getContext()))
         ManagerREST.FindService(getContext(),this,null,1);
-        //Get View
         txtViewtitleService = (TextView)myview.findViewById(R.id.txtViewTitleServiceCreateService);
         btnGuardar = (Button)myview.findViewById(R.id.btnGuardarCreateService);
         listViewHorario = (ListView)myview.findViewById(R.id.idListViewHorarios);
@@ -86,16 +94,47 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
         editTxtColoniaCreateService = (EditText)myview.findViewById(R.id.editTxtColoniaCreateService);
         editTxtCalleCreateService = (EditText)myview.findViewById(R.id.editTxtCalleCreateService);
         editTextNumCreateService = (EditText)myview.findViewById(R.id.editTxtNumCreateService);
-
+        btnLocalizar = (Button)myview.findViewById(R.id.idAutoLocalizar);
         imgViewServicePort  = (ImageView)myview.findViewById(R.id.imgBackgroundServiceCreateService);
 
-        ColorAcivity colorAcivity =  new ManagerBD(getContext()).GetColorActivity(ApiManager.SERVICE_EDIT_FRGAMENT);
-        if(colorAcivity!=null)
-        {
+        StorageUtils.InizilateSharedPrefernces(myActivity);
+        int color = StorageUtils.getColor(getString(R.string.ChatKeyColor));
+        if(color!=0) {
             RelativeLayout layout = myview.findViewById(R.id.id_fragment);
-            int color  = colorAcivity.parseColor();
             layout.setBackgroundColor(color);
         }
+
+        btnLocalizar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //...Localizar
+                // Inicializa nuestro objeto LocationManager
+                if(ApiManager.locationManager ==  null)
+                ApiManager.locationManager = (LocationManager) myActivity.getSystemService(myActivity.LOCATION_SERVICE);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if(ApiManager.checkPersmios(myActivity))
+                        latLng = ApiManager.getCurrentLocation(myActivity);
+                }
+                else {
+                    latLng =  ApiManager.getCurrentLocation(myActivity);
+                    try {
+                        List<String> address =  ApiManager.getAddress(myActivity,latLng);
+                        Toast.makeText(myActivity,address.get(0) , Toast.LENGTH_LONG).show();
+                        editTxtCiudadCreateService.setText(address.get(1));
+                        editTxtColoniaCreateService.setText(address.get(2));
+                        editTxtCalleCreateService.setText(address.get(3));
+                        editTextNumCreateService.setText(address.get(4));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+
+
+            }
+        });
 
         return myview;
     }
@@ -103,8 +142,7 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        myActivity = (PantallaInicio) getActivity();
-        myActivity.setDataReceivedListener(this);
+
         InflarListaDiasSemana();
         setEnabledView(false);
         btnEventEdit();
@@ -179,9 +217,6 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
 
         listViewHorario.setAdapter(adapter);
     }
-
-
-
     private boolean ValidarDatos()
     {
         if(
@@ -299,7 +334,8 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
         {
             // Guardamos el thumbnail de la imagen en un archivo con el siguiente nombre
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-
+            if(bitmap!=null)
+                bitmap = ApiManager.rezieBitmapApplicaition(bitmap);
             imgServicePort  = bitmap;
             imgViewServicePort.setImageBitmap(imgServicePort);
 
@@ -315,7 +351,8 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
 
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(pathImage,bmOptions);
-
+            if(bitmap!=null)
+                bitmap = ApiManager.rezieBitmapApplicaition(bitmap);
             imgServicePort  = bitmap;
             imgViewServicePort.setImageBitmap(imgServicePort);
 
@@ -323,6 +360,14 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
                 encodeBase64Img = ImageUtil.encodeBase64(bitmap);
             Log.i("Path Sotrage",pathImage);
 
+        }
+        if(resultCode == RESULT_OK && requestCode == ApiManager.CODE_RESULT_CHANGE_COLOR) {
+            StorageUtils.InizilateSharedPrefernces(myActivity);
+            int color = StorageUtils.getColor(getString(R.string.CreateServiceKeyColor));
+            if(color!=0) {
+                RelativeLayout layout = myview.findViewById(R.id.id_fragment);
+                layout.setBackgroundColor(color);
+            }
         }
     }
 

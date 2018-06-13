@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,6 +29,7 @@ import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
 import com.mecanicosgruas.edu.mecanicosgruas.ReadPath.ReadPathUtil;
 import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
+import com.mecanicosgruas.edu.mecanicosgruas.StorageUtils.StorageUtils;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.model.ColorAcivity;
 import com.mecanicosgruas.edu.mecanicosgruas.model.User;
@@ -71,12 +73,11 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
         myFragmentView = inflater.inflate(R.layout.fragment_settings,container,false);
         myActivity = (PantallaInicio) getActivity();
         myActivity.setDataReceivedListener(this);
-
-        ColorAcivity colorAcivity =  new ManagerBD(getContext()).GetColorActivity(ApiManager.SETTINGS_FRGAMENT);
-        if(colorAcivity!=null)
-        {
+        myActivity.fragmentSharedPrefernces = myActivity.getString(R.string.SettingsKeyColor);
+        StorageUtils.InizilateSharedPrefernces(myActivity);
+        int color = StorageUtils.getColor(getString(R.string.SettingsKeyColor));
+        if(color!=0) {
             RelativeLayout layout = myFragmentView.findViewById(R.id.id_fragment);
-            int color  = colorAcivity.parseColor();
             layout.setBackgroundColor(color);
         }
 
@@ -225,14 +226,14 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
     @Override
     public void onReceived(int requestCode, int resultCode, Intent data) {
 
-        if (resultCode == RESULT_OK && ApiManager.PHOTO_SHOT == requestCode)
-        {
+        if (resultCode == RESULT_OK && ApiManager.PHOTO_SHOT == requestCode) {
 
             // Guardamos el thumbnail de la imagen en un archivo con el siguiente nombre
-            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            Bitmap bitmap =  ApiManager.rezieBitmapApplicaition((Bitmap) data.getExtras().get("data"));
+            if(bitmap!=null)
 
-            if(imageSelect)
-            {
+
+            if(imageSelect) {
                 imgPerfil = bitmap;
                 imgViewImagePerfil.setImageBitmap(imgPerfil);
 
@@ -241,8 +242,7 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
                         encodeBase64Img = ImageUtil.encodeBase64(bitmap);
 
             }
-            else
-            {
+            else {
                 imgPortada  = bitmap;
                 imgViewImageBackground.setImageBitmap(imgPortada);
 
@@ -252,16 +252,16 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
             }
 
             // mImageView.setImageBitmap(bitmap);
-        } else if(resultCode == RESULT_OK && ApiManager.STORAGE_IMAGE == requestCode)
-        {
+        } else if(resultCode == RESULT_OK && ApiManager.STORAGE_IMAGE == requestCode) {
 
             Uri uri = data.getData();
             String pathImage = ReadPathUtil.getRealPathFromURI_API19(myActivity,uri);
 
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-            Bitmap bitmap = BitmapFactory.decodeFile(pathImage,bmOptions);
-            if(imageSelect)
-            {
+            Bitmap bitmap = ApiManager.rezieBitmapApplicaition(BitmapFactory.decodeFile(pathImage,bmOptions));
+
+
+            if(imageSelect) {
                 imgPerfil = bitmap;
                 imgViewImagePerfil.setImageBitmap(imgPerfil);
 
@@ -269,8 +269,7 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
                         encodeBase64Img = ImageUtil.encodeBase64(bitmap);
 
             }
-            else
-            {
+            else {
                 imgPortada  = bitmap;
                 imgViewImageBackground.setImageBitmap(imgPortada);
 
@@ -280,9 +279,14 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
             }
 
             Log.i("Path Sotrage",pathImage);
-
-
-
+        }
+        if(resultCode == RESULT_OK && requestCode == ApiManager.CODE_RESULT_CHANGE_COLOR) {
+            StorageUtils.InizilateSharedPrefernces(myActivity);
+            int color = StorageUtils.getColor(getString(R.string.SettingsKeyColor));
+            if(color!=0) {
+                RelativeLayout layout = myFragmentView.findViewById(R.id.id_fragment);
+                layout.setBackgroundColor(color);
+            }
         }
     }
 

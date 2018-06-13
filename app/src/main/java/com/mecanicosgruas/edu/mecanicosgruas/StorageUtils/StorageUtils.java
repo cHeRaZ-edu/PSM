@@ -1,8 +1,12 @@
 package com.mecanicosgruas.edu.mecanicosgruas.StorageUtils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Environment;
+
+import com.mecanicosgruas.edu.mecanicosgruas.R;
 
 import java.io.FileOutputStream;
 import java.util.Date;
@@ -12,6 +16,7 @@ import java.util.Date;
  */
 
 public class StorageUtils {
+    static SharedPreferences sharedPreferences;
     /*
     * src
     *   -images
@@ -60,7 +65,18 @@ public class StorageUtils {
         return true;
     }
 
+    public static void InizilateSharedPrefernces(Context context) {
+        sharedPreferences = context.getSharedPreferences(context.getString(R.string.SharedPreferencesFile),context.MODE_PRIVATE);
+    }
 
-
+    public static void SetColorAcivity(String key, String value){
+        sharedPreferences.edit().putString(key,value).apply();
+    }
+    public static int getColor(String key){
+        String color = sharedPreferences.getString(key,"");
+        if(color.equals(""))
+            return 0;
+        return Color.parseColor(color);
+    }
 
 }

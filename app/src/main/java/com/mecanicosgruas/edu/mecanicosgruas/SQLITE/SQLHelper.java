@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class SQLHelper extends SQLiteOpenHelper {
 
-    private static final String DB_NAME = "db_test";
+    private static final String DB_NAME = "db_psm";
     private static final int DB_VERSION = 1;
     public SQLHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -18,9 +18,9 @@ public class SQLHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //db.execSQL(UserTable.CREATE_TABLE);
-        //db.execSQL(ServiceTable.CREATE_TABLE);
-        db.execSQL(AspectActivityTable.CREATE_TABLE);
+        db.execSQL(UserTable.CREATE_TABLE);
+        db.execSQL(ServiceTable.CREATE_TABLE);
+        db.execSQL(ServiceDisplayTable.CREATE_TABLE);
     }
 
     @Override
