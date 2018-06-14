@@ -47,7 +47,7 @@ import java.util.List;
 
 public class ManagerREST {
    // private static final String URI = "http://movilesapp.servehttp.com";
-    private static final String URI = "http://192.168.1.64";
+    private static final String URI = "http://192.168.137.1";
     private static final String ENDPOINT_REGISTER = "/register/user";
     private static final String ENDPOINT_LOGIN = "/login";
     private static final String ENDPOINT_UPDATE_USER  = "/update/user";
@@ -59,12 +59,14 @@ public class ManagerREST {
     private static final String ENDPOINT_GET_USER_MESSAGE = "/message/list_user";
     private static final String ENDPOINT_GET_CHAT_RAW = "/message/chat/user";
     private static final String ENDPOINT_LOGIN_WITH_TWITTER = "/login/twitter";
+    private static final String ENDPOINT_GET_SIZE_SERVICES = "/size/services";
+    private static final String ENDPOINT_GET_SIZE_INBOX = "/size/inbox";
+
     public static String getURI() {
         return URI;
     }
 
-    static public void RegisterUser(final User user, final Context context)
-    {
+    static public void RegisterUser(final User user, final Context context)  {
 
         try
         {
@@ -601,7 +603,6 @@ public class ManagerREST {
             e.printStackTrace();
         }
     }
-
     static public void get_users_message(String nickname, final Context context, final FragmentInbox fragmentInbox)
     {
         RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
@@ -661,7 +662,6 @@ public class ManagerREST {
             e.printStackTrace();
         }
     }
-
     static public void getMessage_Raw(String nickname, String nicknameSend,int sizeMessage, final Context context, final FragmentChat fragment)
     {
         RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
@@ -735,7 +735,6 @@ public class ManagerREST {
             e.printStackTrace();
         }
     }
-
     static public void LoginWithTwitter(String nickname, final Context context) {
         RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
                 .getRequestQueue();
@@ -780,6 +779,43 @@ public class ManagerREST {
             }
             );
             ConnectionREST.getInstance(context).addToRequestQueue(jsonObjectRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    static public void get_Size_Service(final FragmentListService fragmentListService) {
+        RequestQueue requestQueue = ConnectionREST.getInstance(fragmentListService.getContext())
+                .getRequestQueue();
+        try {
+            String URL = URI + ENDPOINT_GET_SIZE_SERVICES;
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("nickname","");
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                    Request.Method.POST, URL, jsonBody, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        if(response==null)
+                            return;
+                        if(response.getString("Status").equals("200")) {
+                            String size = response.getString("count_service");
+                            fragmentListService.count_service = Integer.parseInt(size);
+                        }
+
+                    } catch(JSONException ex) {
+                    ex.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(fragmentListService.getContext(),"El Servidor no esta disponible",Toast.LENGTH_LONG).show();
+                }
+            }
+            );
+
+            ConnectionREST.getInstance(fragmentListService.getContext()).addToRequestQueue(jsonObjectRequest);
         } catch (JSONException e) {
             e.printStackTrace();
         }

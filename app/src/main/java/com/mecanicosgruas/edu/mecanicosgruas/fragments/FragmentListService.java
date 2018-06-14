@@ -20,6 +20,7 @@ import com.mecanicosgruas.edu.mecanicosgruas.PantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
 import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
 import com.mecanicosgruas.edu.mecanicosgruas.StorageUtils.StorageUtils;
+import com.mecanicosgruas.edu.mecanicosgruas.ThreadUtils.ServicesThread;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdaptadorPantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.model.ColorAcivity;
@@ -37,9 +38,12 @@ import static android.app.Activity.RESULT_OK;
 public class FragmentListService extends Fragment implements PantallaInicio.DataReceivedListener{
     private View fragmentView;
     private PantallaInicio activity;
-    private List<Servicio>list_service = new ArrayList<Servicio>();
+    public List<Servicio>list_service = new ArrayList<Servicio>();
+    public boolean isUpdate = false;
     private ListView list_view;
     ListAdaptadorPantallaInicio adapter;
+    public int count_service = 0;
+    private ServicesThread thread_fragment;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -49,8 +53,11 @@ public class FragmentListService extends Fragment implements PantallaInicio.Data
         activity = (PantallaInicio) getActivity();
         activity.fragmentSharedPrefernces = activity.getString(R.string.InicioKeyColor);
         activity.setDataReceivedListener(this);
-        if(ApiManager.isInternetConnection(getContext()))
-        ManagerREST.getService(activity,this);
+        if(ApiManager.isInternetConnection(getContext())) {
+            thread_fragment = new ServicesThread();
+            thread_fragment.execute(this);
+        }
+            //ManagerREST.getService(activity,this);
 
         //ColorAcivity colorAcivity =  new ManagerBD(activity).GetColorActivity(ApiManager.INICIO_FRAGMENT);
         StorageUtils.InizilateSharedPrefernces(activity);
@@ -97,12 +104,20 @@ public class FragmentListService extends Fragment implements PantallaInicio.Data
     }
 
 
-    public void UpdateServices(List<Servicio>list_serviceParam)
-    {
+    public void UpdateServices(List<Servicio>list_serviceParam) {
         list_service = list_serviceParam;
-        adapter = new ListAdaptadorPantallaInicio(list_service,getContext());
+        if(adapter==null) {
+            adapter = new ListAdaptadorPantallaInicio(list_service,getContext());
+            list_view.setAdapter(adapter);
+            isUpdate = false;
+        }
+        else
+        {
+            adapter.notifyDataSetChanged();
+            isUpdate = false;
+        }
 
-        list_view.setAdapter(adapter);
+
     }
 
     @Override
@@ -119,6 +134,7 @@ public class FragmentListService extends Fragment implements PantallaInicio.Data
 
     @Override
     public void onShutdown() {
-
+        thread_fragment.cancel(true);
+        Toast.makeText(getContext(),"Thread done !!!",Toast.LENGTH_LONG).show();
     }
 }

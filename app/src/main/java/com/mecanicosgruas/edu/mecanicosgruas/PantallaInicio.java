@@ -245,9 +245,9 @@ public class PantallaInicio extends AppCompatActivity {
     }
     public void changeFragment(Fragment newFragment, String tag)
     {
-        if (listener != null) {
+        if (listener != null)
             listener.onShutdown();
-        }
+
         FragmentManager fragmentManager = getFragmentManager();
 
         //Operaciones de agregar, remplazar y eliminar
@@ -273,9 +273,9 @@ public class PantallaInicio extends AppCompatActivity {
 
     public void changeFragment(Fragment newFragment, String tag,String titleActionBar)
     {
-        if (listener != null) {
+        if (listener != null)
             listener.onShutdown();
-        }
+
         FragmentManager fragmentManager = getFragmentManager();
 
         //Operaciones de agregar, remplazar y eliminar
@@ -313,9 +313,12 @@ public class PantallaInicio extends AppCompatActivity {
                 .setPositiveButton("Salir", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
+                        if (listener != null)
+                            listener.onShutdown();
                         ApiManager.LogOutTwitter();
                         new ManagerBD(context).TruncTableUser();
                         new ManagerBD(context).TruncTableService();
+
                         finish();
                     }
                 })
@@ -386,4 +389,6 @@ public class PantallaInicio extends AppCompatActivity {
         super.onResume();
         UpdateImage();
     }
+
+
 }
