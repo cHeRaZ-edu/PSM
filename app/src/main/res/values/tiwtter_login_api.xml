@@ -2,6 +2,6 @@
 <resources>
     <!--Remove key and secret when upgrade github-->
 
-    <string name="Twitter_Key">CODE_KEY</string>
-    <string name="Twitter_Secret">CODE_SECRET</string>
+    <string name="Twitter_Key">KEY_CODE</string>
+    <string name="Twitter_Secret">SECRECT_CODE</string>
 </resources>

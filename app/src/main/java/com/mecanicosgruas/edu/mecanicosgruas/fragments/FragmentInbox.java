@@ -2,6 +2,7 @@ package com.mecanicosgruas.edu.mecanicosgruas.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -42,7 +43,8 @@ public class FragmentInbox extends android.support.v4.app.Fragment implements Pa
     ListView listViewInbox;
     List<Inbox> inboxList = new ArrayList<>();
     ListAdapterInbox adapter;
-
+    LinearLayout layout;
+    int colorDefault;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -53,15 +55,14 @@ public class FragmentInbox extends android.support.v4.app.Fragment implements Pa
         activity.fragmentSharedPrefernces = activity.getString(R.string.InboxKeyColor);
         listViewInbox = (ListView) view.findViewById(R.id.listView_inbox);
         if(ApiManager.isInternetConnection(getContext()))
-        ManagerREST.get_users_message(ApiManager.getUser().getNickname(),getContext(),this);
+            ManagerREST.get_users_message(ApiManager.getUser().getNickname(),getContext(),this);
 
         StorageUtils.InizilateSharedPrefernces(activity);
         int color = StorageUtils.getColor(getString(R.string.InboxKeyColor));
+        layout = view.findViewById(R.id.id_fragment);
         if(color!=0)
-        {
-            LinearLayout layout = view.findViewById(R.id.id_fragment);
-            layout.setBackgroundColor(color);
-        }
+            colorDefault = color;
+        OnChangeDarkMode();
 
         return view;
     }
@@ -102,7 +103,7 @@ public class FragmentInbox extends android.support.v4.app.Fragment implements Pa
         });
     }
 
-    public void uodateListUser(List<Inbox> listInboxParam)
+    public void updateListUser(List<Inbox> listInboxParam)
     {
         inboxList = listInboxParam;
 
@@ -124,5 +125,18 @@ public class FragmentInbox extends android.support.v4.app.Fragment implements Pa
     @Override
     public void onShutdown() {
 
+    }
+
+    @Override
+    public void OnResumed() {
+
+    }
+
+    @Override
+    public void OnChangeDarkMode() {
+        if(layout!=null && ApiManager.ENABLED_DARK_MODE)
+            layout.setBackgroundColor(ApiManager.COLOR_DARK);
+        else
+            layout.setBackgroundColor(colorDefault);
     }
 }

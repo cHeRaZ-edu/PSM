@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -75,9 +76,25 @@ public class ApiManager {
     public static final String CHANGE_COLOR_FRGAMENT  = "color_fragment";
     public static LocationManager locationManager;
     public static String CHANNEL_ID = "channel";
+    public static String CHANNEL_ID_MESSAGE = "channel2";
     public static int notificationId = 100;
+    public static int notificationId_MESSAGE = 200;
 
+    public static int count_inbox = 0;
+    public static int old_count_inbox = 0;
+    public static final float DARK_MODE = 3.0f;
+    public  static boolean ENABLED_DARK_MODE = false;
+    public static int COLOR_DARK  = Color.rgb(90,90,90);
+    //Gestures tag
+    public static final String GESTURE_2 = "gesture_2";
+    public static final String GESTURE_7 = "gesture_7";
+    public static final String GESTURE_8 = "gesture_8";
+    public static final String GESTURE_CIRCULO = "gesture_o";
+    public static final String GESTURE_S = "gesture_s";
+    public static final String GESTURE_CUADRADO = "gesture_square";
+    public static final String GESTURE_TRIANGULO= "gesture_triangulo";
 
+    public static boolean runApplicationInbox = false;
     public static User getUser_select() {
         return user_select;
     }
@@ -106,7 +123,7 @@ public class ApiManager {
         Intent intent = new Intent(context.getApplicationContext(), PantallaInicio.class);
         context.startActivity(intent);
     }
-    public static void ImageSelect(final Activity activity) {
+    public static void ImageSelect(final PantallaInicio activity) {
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder = new AlertDialog.Builder(activity, android.R.style.Theme_Material_Dialog_Alert);
@@ -129,6 +146,12 @@ public class ApiManager {
                         i.setType("image/*");
                         i.putExtra(Intent.EXTRA_LOCAL_ONLY,true);
                         activity.startActivityForResult(Intent.createChooser(i,"Selecciona una foto"),ApiManager.STORAGE_IMAGE);
+                    }
+                })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        activity.Resumed();
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_info)
@@ -337,6 +360,21 @@ public class ApiManager {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         // notificationId is a unique int for each notification that you must define
         notificationManager.notify(notificationId, mBuilder.build());
+    }
+    public static void ShowNotify_Message(Context context,String title, String desc) {
+        //No soprotado para oreo en adelante por ahora
+        //debes de crear un canal para las versiones mencinadas
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            return;
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, CHANNEL_ID_MESSAGE)
+                .setSmallIcon(android.R.drawable.stat_notify_chat)
+                .setContentTitle(title)
+                .setContentText(desc)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(notificationId_MESSAGE, mBuilder.build());
     }
     public static Bitmap rezieBitmapApplicaition(Bitmap bitmap){
         if(bitmap == null)

@@ -2,6 +2,7 @@ package com.mecanicosgruas.edu.mecanicosgruas.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -64,13 +65,15 @@ public class FragmentService extends Fragment implements PantallaInicio.DataRece
     private TextView txtViewNum;
 
     private Button SendInbox;
-    private ImageButton SendMessage;
-    private ImageButton SendMessagePhoto;
-    private EditText editTextMessage;
+    //private ImageButton SendMessage;
+    //private ImageButton SendMessagePhoto;
+    //private EditText editTextMessage;
     private FragmentService fragment;
     private View frgamentView;
 
     private PantallaInicio activity;
+    LinearLayout layout;
+    int colorDefault;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -100,22 +103,21 @@ public class FragmentService extends Fragment implements PantallaInicio.DataRece
         //Button
         SendInbox = (Button)view.findViewById(R.id.btnMandarInbox);
 
-        SendMessage = (ImageButton)view.findViewById(R.id.imgBtnSendMessage);
-        SendMessagePhoto = (ImageButton)view.findViewById(R.id.imgBtnSendMessageImg);
+        //SendMessage = (ImageButton)view.findViewById(R.id.imgBtnSendMessage);
+        //SendMessagePhoto = (ImageButton)view.findViewById(R.id.imgBtnSendMessageImg);
 
         //Edit
-        editTextMessage = (EditText)view.findViewById(R.id.editTxtMessage);
+        //editTextMessage = (EditText)view.findViewById(R.id.editTxtMessage);
 
         if(ApiManager.isInternetConnection(getContext()))
-        ManagerREST.FindService(getContext(),null,this,2);
+            ManagerREST.FindService(getContext(),null,this,2);
 
         StorageUtils.InizilateSharedPrefernces(activity);
+        layout = view.findViewById(R.id.id_fragment);
         int color = StorageUtils.getColor(getString(R.string.ServiceDisplayKeyColor));
         if(color!=0)
-        {
-            LinearLayout layout = view.findViewById(R.id.id_fragment);
-            layout.setBackgroundColor(color);
-        }
+            colorDefault = color;
+        OnChangeDarkMode();
 
         return view;
     }
@@ -232,5 +234,18 @@ public class FragmentService extends Fragment implements PantallaInicio.DataRece
     @Override
     public void onShutdown() {
 
+    }
+
+    @Override
+    public void OnResumed() {
+
+    }
+
+    @Override
+    public void OnChangeDarkMode() {
+        if(layout!=null && ApiManager.ENABLED_DARK_MODE)
+            layout.setBackgroundColor(ApiManager.COLOR_DARK);
+        else
+            layout.setBackgroundColor(colorDefault);
     }
 }

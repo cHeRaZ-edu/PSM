@@ -3,6 +3,7 @@ package com.mecanicosgruas.edu.mecanicosgruas.fragments;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -75,6 +76,8 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
     String encodeBase64Img;
     Button btnLocalizar;
     LatLng latLng;
+    RelativeLayout layout;
+    int colorDefault;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -83,7 +86,7 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
         myActivity.setDataReceivedListener(this);
         myActivity.fragmentSharedPrefernces = myActivity.getString(R.string.CreateServiceKeyColor);
         if(ApiManager.isInternetConnection(getContext()))
-        ManagerREST.FindService(getContext(),this,null,1);
+            ManagerREST.FindService(getContext(),this,null,1);
         txtViewtitleService = (TextView)myview.findViewById(R.id.txtViewTitleServiceCreateService);
         btnGuardar = (Button)myview.findViewById(R.id.btnGuardarCreateService);
         listViewHorario = (ListView)myview.findViewById(R.id.idListViewHorarios);
@@ -99,38 +102,43 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
 
         StorageUtils.InizilateSharedPrefernces(myActivity);
         int color = StorageUtils.getColor(getString(R.string.ChatKeyColor));
-        if(color!=0) {
-            RelativeLayout layout = myview.findViewById(R.id.id_fragment);
-            layout.setBackgroundColor(color);
-        }
+        layout = myview.findViewById(R.id.id_fragment);
+        if(color!=0)
+            colorDefault = color;
+        OnChangeDarkMode();
 
         btnLocalizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //...Localizar
-                // Inicializa nuestro objeto LocationManager
-                if(ApiManager.locationManager ==  null)
-                ApiManager.locationManager = (LocationManager) myActivity.getSystemService(myActivity.LOCATION_SERVICE);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if(ApiManager.checkPersmios(myActivity))
-                        latLng = ApiManager.getCurrentLocation(myActivity);
-                }
-                else {
-                    latLng =  ApiManager.getCurrentLocation(myActivity);
-                    try {
-                        List<String> address =  ApiManager.getAddress(myActivity,latLng);
-                        Toast.makeText(myActivity,address.get(0) , Toast.LENGTH_LONG).show();
-                        editTxtCiudadCreateService.setText(address.get(1));
-                        editTxtColoniaCreateService.setText(address.get(2));
-                        editTxtCalleCreateService.setText(address.get(3));
-                        editTextNumCreateService.setText(address.get(4));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
 
-                }
 
+
+                            //...Localizar
+                            // Inicializa nuestro objeto LocationManager
+                            //myActivity.DesactivarSensor();
+                            if(ApiManager.locationManager ==  null)
+                                ApiManager.locationManager = (LocationManager) myActivity.getSystemService(myActivity.LOCATION_SERVICE);
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                if(ApiManager.checkPersmios(myActivity))
+
+                                    latLng = ApiManager.getCurrentLocation(myActivity);
+                            }
+                            else {
+
+                                try {
+                                    latLng =  ApiManager.getCurrentLocation(myActivity);
+                                    List<String> address =  ApiManager.getAddress(myActivity,latLng);
+                                    Toast.makeText(myActivity,address.get(0) , Toast.LENGTH_LONG).show();
+                                    editTxtCiudadCreateService.setText(address.get(1));
+                                    editTxtColoniaCreateService.setText(address.get(2));
+                                    editTxtCalleCreateService.setText(address.get(3));
+                                    editTextNumCreateService.setText(address.get(4));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
 
 
             }
@@ -375,4 +383,18 @@ public class FragmentCreateService extends Fragment implements PantallaInicio.Da
     public void onShutdown() {
 
     }
+
+    @Override
+    public void OnResumed() {
+
+    }
+
+    @Override
+    public void OnChangeDarkMode() {
+        if(layout!=null && ApiManager.ENABLED_DARK_MODE)
+            layout.setBackgroundColor(ApiManager.COLOR_DARK);
+        else
+            layout.setBackgroundColor(colorDefault);
+    }
+
 }

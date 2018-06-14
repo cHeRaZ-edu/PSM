@@ -3,6 +3,7 @@ package com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.Fragment;
+import android.app.IntentService;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -47,7 +48,7 @@ import java.util.List;
 
 public class ManagerREST {
    // private static final String URI = "http://movilesapp.servehttp.com";
-    private static final String URI = "http://192.168.137.1";
+    private static final String URI = "http://192.168.1.72";
     private static final String ENDPOINT_REGISTER = "/register/user";
     private static final String ENDPOINT_LOGIN = "/login";
     private static final String ENDPOINT_UPDATE_USER  = "/update/user";
@@ -60,7 +61,7 @@ public class ManagerREST {
     private static final String ENDPOINT_GET_CHAT_RAW = "/message/chat/user";
     private static final String ENDPOINT_LOGIN_WITH_TWITTER = "/login/twitter";
     private static final String ENDPOINT_GET_SIZE_SERVICES = "/size/services";
-    private static final String ENDPOINT_GET_SIZE_INBOX = "/size/inbox";
+    private static final String ENDPOINT_GET_SIZE_INBOX = "/get/notify/inbox";
 
     public static String getURI() {
         return URI;
@@ -198,6 +199,7 @@ public class ManagerREST {
                                 }
 
                                 Log.i("Login User",response.getString("messageResponse"));
+                                Toast.makeText(context.getApplicationContext(),response.getString("messageResponse"),Toast.LENGTH_LONG).show();
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -417,8 +419,8 @@ public class ManagerREST {
                         }
 
 
-
-                        Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
+                        Log.i("FindService",response.getString("messageResponse"));
+                        //Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
                     } catch(JSONException ex)
                     {
                         ex.printStackTrace();
@@ -439,7 +441,6 @@ public class ManagerREST {
             e.printStackTrace();
         }
     }
-
     static public void getService(final Context context, final FragmentListService fragment)
     {
         RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
@@ -479,12 +480,17 @@ public class ManagerREST {
                                                 );
                             }
 
-                            fragment.UpdateServices(listServices);
+                          ManagerBD managerBD =  new ManagerBD(fragment.getContext());
+                          managerBD.TruncTableTableServiceDisplay();
+                          for(int i = 0;i<listServices.size();i++) {
+                              managerBD.InsertTableServiceDisplay(listServices.get(i));
+                          }
+                          fragment.UpdateServices(listServices);
                         }
 
 
-
-                        Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
+                        Log.i("getService in Thread",response.getString("messageResponse"));
+                        //Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
                     } catch(JSONException ex)
                     {
                         ex.printStackTrace();
@@ -504,7 +510,6 @@ public class ManagerREST {
             e.printStackTrace();
         }
     }
-
     static public void FavoritoService(String nicknameUser,String nicknameService,final Context context,final FragmentService fragment)
     {
         RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
@@ -552,7 +557,6 @@ public class ManagerREST {
             e.printStackTrace();
         }
     }
-
     static public void addMessage(String nicknameUser,String nicknameRevecie, String messageString, String base64CodeImg,final Context context)
     {
         RequestQueue requestQueue = ConnectionREST.getInstance(context.getApplicationContext())
@@ -639,11 +643,11 @@ public class ManagerREST {
                                 listInbox.add(inbox);
                             }
 
-                            fragmentInbox.uodateListUser(listInbox);
+                            fragmentInbox.updateListUser(listInbox);
                         }
 
-                        Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
-
+                        Log.i("get_users_message",response.getString("messageResponse"));
+                        //Toast.makeText(context,response.getString("messageResponse"),Toast.LENGTH_LONG).show();
                     } catch(JSONException ex)
                     {
                         ex.printStackTrace();
@@ -714,9 +718,9 @@ public class ManagerREST {
                             fragment.Update_Chat(listMessage);
                         }
 
+                        Log.i("getMessage_Raw",response.getString("messageResponse") + " Size: " + size);
 
-
-                        Toast.makeText(context,response.getString("messageResponse") + " Size: " + size,Toast.LENGTH_LONG).show();
+                        //Toast.makeText(context,response.getString("messageResponse") + " Size: " + size,Toast.LENGTH_LONG).show();
                     } catch(JSONException ex)
                     {
                         ex.printStackTrace();
@@ -816,6 +820,43 @@ public class ManagerREST {
             );
 
             ConnectionREST.getInstance(fragmentListService.getContext()).addToRequestQueue(jsonObjectRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    static public void get_SizeInbox(final Context context,String nickname){
+        RequestQueue requestQueue = ConnectionREST.getInstance(context)
+                .getRequestQueue();
+        try {
+                String URL = URI + ENDPOINT_GET_SIZE_INBOX;
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("nickname",nickname);
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                    Request.Method.POST, URL, jsonBody, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        if(response==null)
+                            return;
+                        if(response.getString("Status").equals("200")) {
+                            String count  = response.getString("count_inbox");
+                            ApiManager.count_inbox = Integer.parseInt(count);
+                        }
+
+                    } catch(JSONException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context,"El Servidor no esta disponible",Toast.LENGTH_LONG).show();
+                }
+            }
+            );
+
+            ConnectionREST.getInstance(context).addToRequestQueue(jsonObjectRequest);
         } catch (JSONException e) {
             e.printStackTrace();
         }

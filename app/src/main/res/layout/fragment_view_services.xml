@@ -168,62 +168,62 @@
             android:layout_marginBottom="10dp"
             android:text="@string/desc_num"
             android:textSize="18sp" />
+        <!--
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chat"
+                    android:textSize="18sp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_gravity="center_horizontal"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Chat"
-            android:textSize="18sp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:layout_gravity="center_horizontal"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="300dp">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp"
-                android:orientation="vertical">
-
-                <ListView
-                    android:id="@+id/listView_chat"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
+                    android:layout_height="300dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="50dp"
+                        android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true">
+                        <ListView
+                            android:id="@+id/listView_chat"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
 
-                <ImageButton
-                    android:id="@+id/imgBtnSendMessageImg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#36c2d4"
-                    android:src="@drawable/ic_action_camera" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true">
 
-                <EditText
-                    android:id="@+id/editTxtMessage"
-                    android:layout_width="250dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Mensaje..."
-                    android:inputType="textMultiLine" />
+                        <ImageButton
+                            android:id="@+id/imgBtnSendMessageImg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#36c2d4"
+                            android:src="@drawable/ic_action_camera" />
 
-                <ImageButton
-                    android:id="@+id/imgBtnSendMessage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#36c2d4"
-                    android:src="@drawable/ic_action_send" />
+                        <EditText
+                            android:id="@+id/editTxtMessage"
+                            android:layout_width="250dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Mensaje..."
+                            android:inputType="textMultiLine" />
+
+                        <ImageButton
+                            android:id="@+id/imgBtnSendMessage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#36c2d4"
+                            android:src="@drawable/ic_action_send" />
 
 
-            </LinearLayout>
-        </RelativeLayout>
-
+                    </LinearLayout>
+                </RelativeLayout>
+        -->
 
 
     </LinearLayout>

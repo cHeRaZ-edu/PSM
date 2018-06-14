@@ -6,10 +6,13 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Environment;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.mecanicosgruas.edu.mecanicosgruas.R;
 
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by LUNA on 15/05/2018.
@@ -41,6 +44,10 @@ public class StorageUtils {
         // false si no se puede utilizar
         return state.equals(Environment.MEDIA_MOUNTED);
     }
+
+    public static final String LAT ="latitud";
+    public static final String LNG ="logintud";
+
 
     public static boolean WriteFile(Context context,StoragePlace typeStorage,Bitmap bitmap)
     {
@@ -77,6 +84,31 @@ public class StorageUtils {
         if(color.equals(""))
             return 0;
         return Color.parseColor(color);
+    }
+    public static  void SetLatLng(LatLng latLng){
+        sharedPreferences.edit().putFloat(LAT,(float) latLng.latitude).apply();
+        sharedPreferences.edit().putFloat(LNG,(float) latLng.longitude).apply();
+    }
+    public static LatLng GetLatLng() {
+        float lat = sharedPreferences.getFloat(LAT,0.0f);
+        float lng = sharedPreferences.getFloat(LNG,0.0f);
+
+        return new LatLng(lat,lng);
+    }
+    public static void SetUbicacion(List<String> list_geo){
+        sharedPreferences.edit().putString("ciudad",list_geo.get(1));
+        sharedPreferences.edit().putString("colonia",list_geo.get(2));
+        sharedPreferences.edit().putString("calle",list_geo.get(3));
+        sharedPreferences.edit().putString("numero",list_geo.get(4));
+    }
+    public static List<String> GetUbicacion(){
+        List<String> list_geo = new ArrayList<>();
+        list_geo.add(sharedPreferences.getString("ciudad",""));
+        list_geo.add(sharedPreferences.getString("colonia",""));
+        list_geo.add(sharedPreferences.getString("calle",""));
+        list_geo.add(sharedPreferences.getString("numero",""));
+
+        return  list_geo;
     }
 
 }

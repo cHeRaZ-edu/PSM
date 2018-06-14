@@ -133,4 +133,7 @@
     <string name="InboxKeyColor">Inbox</string>
     <string name="ChatKeyColor">Chat</string>
     <string name="SettingsKeyColor">Settings</string>
+
+    <string name="enabled_ges">Activar Gestura</string>
+    <string name="disable_ges">Desactivar Gestura</string>
 </resources>

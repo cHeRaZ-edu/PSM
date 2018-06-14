@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--Remove key when upgrade github-->
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">CODE_KEY</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">KEY_CODE</string>
 </resources>

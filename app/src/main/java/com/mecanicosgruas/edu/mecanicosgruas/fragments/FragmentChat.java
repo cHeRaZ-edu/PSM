@@ -3,6 +3,7 @@ package com.mecanicosgruas.edu.mecanicosgruas.fragments;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
 import com.mecanicosgruas.edu.mecanicosgruas.ImageUtil.ImageUtil;
@@ -26,6 +28,7 @@ import com.mecanicosgruas.edu.mecanicosgruas.R;
 import com.mecanicosgruas.edu.mecanicosgruas.ReadPath.ReadPathUtil;
 import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
 import com.mecanicosgruas.edu.mecanicosgruas.StorageUtils.StorageUtils;
+import com.mecanicosgruas.edu.mecanicosgruas.ThreadUtils.ChatThread;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdapterChat;
 import com.mecanicosgruas.edu.mecanicosgruas.model.ColorAcivity;
@@ -50,7 +53,7 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
 {
     ListView listViewMessage;
     public User user;
-    List<Message> listMessage = new ArrayList<>();
+    public List<Message> listMessage = new ArrayList<>();
     TextView nicknameUser;
     ImageButton btn_ImageLoad;
     ImageButton btn_SendMessage;
@@ -59,8 +62,10 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
     CircleImageView imgPerfilUser;
     String encodeBase64Img;
     ListAdapterChat adapter;
-    ThreadChatSlow callChatThread;
+    ChatThread chatThread;
     View fragmentView;
+    RelativeLayout layout;
+    int colorDefault;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -91,9 +96,9 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
 
         //if(ApiManager.isInternetConnection(getContext()))
         //ManagerREST.getMessage_Raw(ApiManager.getUser().getNickname(),user.getNickname(),getContext(),this);
-        callChatThread = new ThreadChatSlow();
+        chatThread = new ChatThread();
 
-        callChatThread.execute(this);
+        chatThread.execute(this);
 
 
         EventButton();
@@ -101,12 +106,10 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
 
         StorageUtils.InizilateSharedPrefernces(activty);
         int color = StorageUtils.getColor(getString(R.string.ChatKeyColor));
+        layout = view.findViewById(R.id.id_fragment);
         if(color!=0)
-        {
-            RelativeLayout layout = view.findViewById(R.id.id_fragment);
-            layout.setBackgroundColor(color);
-        }
-
+            colorDefault = color;
+        OnChangeDarkMode();
 
         return view;
     }
@@ -143,8 +146,7 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
 
     }
 
-    void adapterListView()
-    {
+    void adapterListView() {
         if(adapter!=null)
         {
             adapter.notifyDataSetChanged();
@@ -153,8 +155,6 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
 
             return;
         }
-
-
         adapter = new ListAdapterChat(listMessage,getContext());
 
         listViewMessage.setAdapter(adapter);
@@ -201,23 +201,15 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
                 layout.setBackgroundColor(color);
             }
         }
-
-
-           if( callChatThread.isCancelled())
-           {
-               callChatThread = new ThreadChatSlow();
-               callChatThread.execute(this);
-           }
-
     }
     @Override
-    public void onShutdown()
-    {
-        callChatThread.cancel(true);
-    }
+    public void onShutdown() {
+        Toast.makeText(getContext(),"Shutdown process",Toast.LENGTH_LONG).show();
 
-    public void Update_Chat(List<Message> listMessageParam)
-    {
+        if(chatThread!=null)
+            chatThread.cancel(true);
+    }
+    public void Update_Chat(List<Message> listMessageParam) {
         if(listMessageParam.size()!=0)
         {
             for(int i = listMessage.size(); i<listMessageParam.size();i++)
@@ -229,45 +221,20 @@ public class FragmentChat extends Fragment implements PantallaInicio.DataReceive
             adapterListView();
         }
     }
-
-
-
-}
-
-class ThreadChatSlow extends AsyncTask<FragmentChat,String,String>
-{
+    @Override
+    public void OnResumed() {
+        Toast.makeText(getContext(),"Resumed process",Toast.LENGTH_LONG).show();
+        if(chatThread.isCancelled()) {
+            chatThread = new ChatThread();
+            chatThread.execute(this);
+        }
+    }
 
     @Override
-    protected String doInBackground(FragmentChat... fragmentChats) {
-        final FragmentChat fragment = fragmentChats[0];
-        for(;;)
-        {
-            if(!ApiManager.isInternetConnection(fragment.getContext()))
-                break;
-
-            if(isCancelled())
-            {
-                Log.d("Destroy","Thread destroy !!!");
-                break;
-            }
-
-            //Este metodo se llama en el hilo principal
-            fragment.activty.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    ManagerREST.getMessage_Raw(ApiManager.getUser().getNickname(),fragment.user.getNickname(),fragment.listMessage.size(),fragment.getContext(),fragment);
-
-                }
-            });
-
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return null;
+    public void OnChangeDarkMode() {
+        if(layout!=null && ApiManager.ENABLED_DARK_MODE)
+            layout.setBackgroundColor(ApiManager.COLOR_DARK);
+        else
+            layout.setBackgroundColor(colorDefault);
     }
 }

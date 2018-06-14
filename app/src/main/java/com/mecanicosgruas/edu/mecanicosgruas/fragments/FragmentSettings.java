@@ -3,6 +3,7 @@ package com.mecanicosgruas.edu.mecanicosgruas.fragments;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.support.constraint.ConstraintLayout;
@@ -67,6 +68,8 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
     boolean imageSelect;
     String encodeBase64Portada;
     String encodeBase64Img;
+    RelativeLayout layout;
+    int colorDefault;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -76,10 +79,10 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
         myActivity.fragmentSharedPrefernces = myActivity.getString(R.string.SettingsKeyColor);
         StorageUtils.InizilateSharedPrefernces(myActivity);
         int color = StorageUtils.getColor(getString(R.string.SettingsKeyColor));
-        if(color!=0) {
-            RelativeLayout layout = myFragmentView.findViewById(R.id.id_fragment);
-            layout.setBackgroundColor(color);
-        }
+        layout = myFragmentView.findViewById(R.id.id_fragment);
+        if(color!=0)
+            colorDefault = color;
+        OnChangeDarkMode();
 
         return myFragmentView;
     }
@@ -167,7 +170,7 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
                     );
 
                     if(ApiManager.isInternetConnection(getContext()))
-                    ManagerREST.UpdateUser(usuario, encodeBase64Img,encodeBase64Portada,myActivity,myActivity);
+                        ManagerREST.UpdateUser(usuario, encodeBase64Img,encodeBase64Portada,myActivity,myActivity);
 
                     btnEdit.setText("Editar");
                     setEnabledView(false);
@@ -293,5 +296,18 @@ public class FragmentSettings extends Fragment implements PantallaInicio.DataRec
     @Override
     public void onShutdown() {
 
+    }
+
+    @Override
+    public void OnResumed() {
+
+    }
+
+    @Override
+    public void OnChangeDarkMode() {
+        if(layout!=null && ApiManager.ENABLED_DARK_MODE)
+            layout.setBackgroundColor(ApiManager.COLOR_DARK);
+        else
+            layout.setBackgroundColor(colorDefault);
     }
 }

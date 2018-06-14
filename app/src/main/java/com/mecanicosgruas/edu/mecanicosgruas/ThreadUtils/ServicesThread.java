@@ -2,6 +2,7 @@ package com.mecanicosgruas.edu.mecanicosgruas.ThreadUtils;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.mecanicosgruas.edu.mecanicosgruas.ApiManager.ApiManager;
@@ -9,6 +10,7 @@ import com.mecanicosgruas.edu.mecanicosgruas.SQLITE.ManagerBD;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.fragments.FragmentListService;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
+import com.mecanicosgruas.edu.mecanicosgruas.model.User;
 
 import java.util.List;
 
@@ -19,8 +21,6 @@ import java.util.List;
 public class ServicesThread extends AsyncTask<FragmentListService,String,String> {
     FragmentListService fragmentListService;
 
-
-
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -30,33 +30,17 @@ public class ServicesThread extends AsyncTask<FragmentListService,String,String>
     @Override
     protected String doInBackground(FragmentListService... fragment) {
         fragmentListService = fragment[0];
-        new ManagerBD(fragmentListService.getContext()).TruncTableTableServiceDisplay();
 
         while(true) {
 
             if(isCancelled())
                 break;
-            //...Actualizar en sqlite
-            //UpdateSqliteTablesServicios();
+            if(fragmentListService==null)
+                break;
 
-            if(fragmentListService.list_service.size()!=fragmentListService.count_service)
-                fragmentListService.isUpdate = true;
+            Get_Services();
 
-            //...Checar si hay cambios
-            if(!fragmentListService.isUpdate)
-                ManagerREST.get_Size_Service(fragmentListService);
 
-            else {
-                //...Actualizar listView
-                fragmentListService.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Actulizar desde el web services
-                        if(fragmentListService.list_service.size()!=fragmentListService.count_service)
-                            ManagerREST.getService(fragmentListService.getContext(),fragmentListService);
-                    }
-                });
-            }
 
             try {
                 Thread.sleep(3000);
@@ -65,7 +49,7 @@ public class ServicesThread extends AsyncTask<FragmentListService,String,String>
             }
 
         }
-
+        Log.i("Thread Service","Thread done !!!");
         //Toast.makeText(fragmentListService.getContext(),"Thread Done !!!",Toast.LENGTH_LONG).show();
 
         return null;
@@ -79,7 +63,6 @@ public class ServicesThread extends AsyncTask<FragmentListService,String,String>
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        new ManagerBD(fragmentListService.getContext()).TruncTableTableServiceDisplay();
     }
     /*
     void UpdateSqliteTablesServicios(){
@@ -91,5 +74,42 @@ public class ServicesThread extends AsyncTask<FragmentListService,String,String>
         }
     }
     */
+
+    private void Get_Services(){
+        if(fragmentListService.list_service.size()!=fragmentListService.count_service)
+            fragmentListService.isUpdate = true;
+
+        //...Checar si hay cambios
+        if(!fragmentListService.isUpdate)
+        {
+            if(ApiManager.isInternetConnection(fragmentListService.getContext()))
+                ManagerREST.get_Size_Service(fragmentListService);
+        }
+        else {
+            if(ApiManager.isInternetConnection(fragmentListService.getContext())) {
+                //... Server
+                fragmentListService.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ManagerREST.getService(fragmentListService.getContext(),fragmentListService);
+                        fragmentListService.isUpdate = false;
+                    }
+                });
+
+            }
+            else {
+                //... Sqlite
+                fragmentListService.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<Servicio> listServicio = new ManagerBD(fragmentListService.getContext()).SelectServiciosDisplay();
+                        fragmentListService.UpdateServices(listServicio);
+                        fragmentListService.isUpdate = false;
+                    }
+                });
+            }
+        }
+    }
+
 
 }

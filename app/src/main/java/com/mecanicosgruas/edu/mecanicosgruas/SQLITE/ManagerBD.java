@@ -209,7 +209,6 @@ CREATE UNIQUE INDEX data_idx ON data(event_id, track_id);*/
         Cursor cursor = db.rawQuery("SELECT * FROM " + ServiceDisplayTable.TABLE_NAME,null);//Permite utilizar la sintaxis de sql completo
 
 
-
         while(cursor.moveToNext())//Obtiene la posicion anterior al ultimo
         {
             Servicio servicio = new Servicio();

@@ -27,13 +27,18 @@
 
         </android.support.design.widget.AppBarLayout>
 
-
-        <FrameLayout
-            android:id="@+id/fragment_base"
+        <android.gesture.GestureOverlayView
+            android:id="@+id/gesture_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize">
-        </FrameLayout>
+            android:layout_marginTop="?attr/actionBarSize"
+            android:gestureColor="#00000000">
+            <FrameLayout
+                android:id="@+id/fragment_base"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </android.gesture.GestureOverlayView>
+
 
     </android.support.design.widget.CoordinatorLayout>
 

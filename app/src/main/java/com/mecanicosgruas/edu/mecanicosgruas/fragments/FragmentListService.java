@@ -1,6 +1,7 @@
 package com.mecanicosgruas.edu.mecanicosgruas.fragments;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import com.mecanicosgruas.edu.mecanicosgruas.ThreadUtils.ServicesThread;
 import com.mecanicosgruas.edu.mecanicosgruas.WebServices.Connection.ManagerREST;
 import com.mecanicosgruas.edu.mecanicosgruas.adaptadores.ListAdaptadorPantallaInicio;
 import com.mecanicosgruas.edu.mecanicosgruas.model.ColorAcivity;
+import com.mecanicosgruas.edu.mecanicosgruas.model.Message;
 import com.mecanicosgruas.edu.mecanicosgruas.model.Servicio;
 
 import java.util.ArrayList;
@@ -42,8 +44,10 @@ public class FragmentListService extends Fragment implements PantallaInicio.Data
     public boolean isUpdate = false;
     private ListView list_view;
     ListAdaptadorPantallaInicio adapter;
-    public int count_service = 0;
+    public int count_service = -1;
     private ServicesThread thread_fragment;
+    LinearLayout layout;
+    int colorDefault;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -53,20 +57,20 @@ public class FragmentListService extends Fragment implements PantallaInicio.Data
         activity = (PantallaInicio) getActivity();
         activity.fragmentSharedPrefernces = activity.getString(R.string.InicioKeyColor);
         activity.setDataReceivedListener(this);
-        if(ApiManager.isInternetConnection(getContext())) {
-            thread_fragment = new ServicesThread();
-            thread_fragment.execute(this);
-        }
+
+        count_service = -1;
+        thread_fragment = new ServicesThread();
+        thread_fragment.execute(this);
+
             //ManagerREST.getService(activity,this);
 
         //ColorAcivity colorAcivity =  new ManagerBD(activity).GetColorActivity(ApiManager.INICIO_FRAGMENT);
         StorageUtils.InizilateSharedPrefernces(activity);
         int color = StorageUtils.getColor(getString(R.string.InicioKeyColor));
-        if(color!=0) {
-            LinearLayout layout = view.findViewById(R.id.id_fragment);
-            layout.setBackgroundColor(color);
-        }
-
+        layout = view.findViewById(R.id.id_fragment);
+        if(color!=0)
+            colorDefault = color;
+        OnChangeDarkMode();
 
 
         return view;
@@ -87,7 +91,6 @@ public class FragmentListService extends Fragment implements PantallaInicio.Data
 
         list_view.setAdapter(adapter);
     }
-
     private void EventListView()
     {
 
@@ -102,24 +105,29 @@ public class FragmentListService extends Fragment implements PantallaInicio.Data
             }
         });
     }
-
-
     public void UpdateServices(List<Servicio>list_serviceParam) {
-        list_service = list_serviceParam;
+        if(list_serviceParam.size()!=0)
+        {
+            for(int i = list_service.size(); i<list_serviceParam.size();i++)
+            {
+                Servicio servicio = list_serviceParam.get(i);
+                list_service.add(servicio);
+            }
+
+        }
+        count_service = list_serviceParam.size();
+        isUpdate = false;
         if(adapter==null) {
             adapter = new ListAdaptadorPantallaInicio(list_service,getContext());
             list_view.setAdapter(adapter);
-            isUpdate = false;
+
         }
         else
         {
-            adapter.notifyDataSetChanged();
-            isUpdate = false;
+            adapter = new ListAdaptadorPantallaInicio(list_service,getContext());
+            list_view.setAdapter(adapter);
         }
-
-
     }
-
     @Override
     public void onReceived(int requestCode, int resultCode, Intent data) {
         if(resultCode == RESULT_OK && requestCode == ApiManager.CODE_RESULT_CHANGE_COLOR) {
@@ -131,10 +139,29 @@ public class FragmentListService extends Fragment implements PantallaInicio.Data
             }
         }
     }
-
     @Override
     public void onShutdown() {
-        thread_fragment.cancel(true);
+        if(thread_fragment!=null)
+        {
+            thread_fragment.cancel(true);
+        }
+
         Toast.makeText(getContext(),"Thread done !!!",Toast.LENGTH_LONG).show();
+    }
+    @Override
+    public void OnResumed() {
+        if(thread_fragment.isCancelled())
+        {
+            thread_fragment = new ServicesThread();
+            thread_fragment.execute(this);
+        }
+    }
+
+    @Override
+    public void OnChangeDarkMode() {
+        if(layout!=null && ApiManager.ENABLED_DARK_MODE)
+            layout.setBackgroundColor(ApiManager.COLOR_DARK);
+        else
+            layout.setBackgroundColor(colorDefault);
     }
 }
